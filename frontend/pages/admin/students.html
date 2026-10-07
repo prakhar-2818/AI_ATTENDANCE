@@ -4,11 +4,20 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
 <title>Students | FaceAttend</title>
 
+
 <style>
+
+/* =========================================
+   RESET
+========================================= */
 
 *{
     margin:0;
@@ -16,172 +25,527 @@
     box-sizing:border-box;
 }
 
+
+/* =========================================
+   BODY
+========================================= */
+
 body{
+
     font-family:Arial,sans-serif;
+
     background:#0f172a;
+
     color:white;
+
 }
+
+
+/* =========================================
+   SIDEBAR
+========================================= */
 
 .sidebar{
+
     position:fixed;
+
     left:0;
+
     top:0;
+
     width:240px;
+
     height:100vh;
+
     background:#111827;
+
     border-right:1px solid #334155;
+
     padding:25px 15px;
+
 }
+
 
 .logo{
+
     font-size:24px;
+
     font-weight:bold;
+
     padding:10px 15px 30px;
+
 }
+
 
 .logo span{
+
     color:#3b82f6;
+
 }
 
+
 .nav a{
+
     display:block;
+
     padding:13px 15px;
+
     margin-bottom:7px;
+
     color:#94a3b8;
+
     text-decoration:none;
+
     border-radius:8px;
+
 }
+
 
 .nav a:hover,
 .nav a.active{
+
     background:#2563eb;
+
     color:white;
+
 }
+
 
 .logout{
+
     color:#fca5a5!important;
+
     cursor:pointer;
+
 }
+
+
+/* =========================================
+   MAIN
+========================================= */
 
 .main{
+
     margin-left:240px;
+
     padding:30px;
+
 }
+
+
+/* =========================================
+   HEADER
+========================================= */
 
 .header{
+
     display:flex;
+
     justify-content:space-between;
+
     align-items:center;
+
     margin-bottom:25px;
+
 }
+
 
 .header p{
+
     color:#94a3b8;
+
     margin-top:7px;
+
 }
+
+
+/* =========================================
+   BUTTON
+========================================= */
 
 .btn{
+
     padding:11px 17px;
+
     border:0;
+
     border-radius:8px;
+
     background:#2563eb;
+
     color:white;
+
     font-weight:bold;
+
     cursor:pointer;
+
 }
+
 
 .btn:hover{
+
     background:#1d4ed8;
+
 }
+
+
+/* =========================================
+   PANEL
+========================================= */
 
 .panel{
+
     background:#1e293b;
+
     border:1px solid #334155;
+
     border-radius:15px;
+
     padding:25px;
+
 }
+
+
+/* =========================================
+   TABLE
+========================================= */
 
 .table-wrap{
+
     overflow:auto;
+
 }
 
+
 .table{
+
     width:100%;
+
     border-collapse:collapse;
+
 }
+
 
 .table th,
 .table td{
+
     text-align:left;
+
     padding:14px;
+
     border-bottom:1px solid #334155;
+
 }
+
 
 .table th{
+
     color:#94a3b8;
+
     font-size:13px;
+
 }
+
+
+/* =========================================
+   STATUS
+========================================= */
 
 .success{
+
     color:#86efac;
+
 }
+
 
 .warning{
+
     color:#fde68a;
+
 }
+
+
+/* =========================================
+   DANGER
+========================================= */
 
 .danger{
+
     background:#7f1d1d;
+
 }
+
+
+/* =========================================
+   FILE INPUT
+========================================= */
 
 .file-input{
+
     display:none;
+
 }
+
+
+/* =========================================
+   UPLOAD BUTTON
+========================================= */
 
 .upload-btn{
+
     padding:9px 14px;
+
     border:0;
+
     border-radius:7px;
+
     background:#2563eb;
+
     color:white;
+
     font-weight:bold;
+
     cursor:pointer;
+
 }
+
 
 .upload-btn:hover{
+
     background:#1d4ed8;
+
 }
+
+
+/* =========================================
+   CHANGE BUTTON
+========================================= */
 
 .change-btn{
+
     padding:9px 14px;
+
     border:0;
+
     border-radius:7px;
+
     background:#475569;
+
     color:white;
+
     font-weight:bold;
+
     cursor:pointer;
+
 }
 
+
 .change-btn:hover{
+
     background:#334155;
+
 }
+
+
+/* =========================================
+   DELETE BUTTON
+========================================= */
+
+.delete-btn{
+
+    padding:9px 14px;
+
+    border:0;
+
+    border-radius:7px;
+
+    background:#dc2626;
+
+    color:white;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    margin-left:6px;
+
+}
+
+
+.delete-btn:hover{
+
+    background:#b91c1c;
+
+}
+
+
+/* =========================================
+   ADD STUDENT MODAL
+========================================= */
+
+.modal{
+
+    display:none;
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,0.65);
+
+    z-index:1000;
+
+    align-items:center;
+
+    justify-content:center;
+
+}
+
+
+.modal-box{
+
+    width:420px;
+
+    max-width:90%;
+
+    background:#1e293b;
+
+    border:1px solid #334155;
+
+    border-radius:15px;
+
+    padding:25px;
+
+    box-shadow:
+        0 20px 50px rgba(0,0,0,0.4);
+
+}
+
+
+.modal-box h2{
+
+    margin-bottom:20px;
+
+}
+
+
+.form-group{
+
+    margin-bottom:15px;
+
+}
+
+
+.form-group label{
+
+    display:block;
+
+    margin-bottom:7px;
+
+    color:#cbd5e1;
+
+    font-size:14px;
+
+}
+
+
+.form-group input{
+
+    width:100%;
+
+    padding:11px 12px;
+
+    border:1px solid #475569;
+
+    border-radius:8px;
+
+    background:#0f172a;
+
+    color:white;
+
+    outline:none;
+
+}
+
+
+.form-group input:focus{
+
+    border-color:#2563eb;
+
+}
+
+
+.modal-actions{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    gap:10px;
+
+    margin-top:20px;
+
+}
+
+
+.cancel-btn{
+
+    padding:11px 17px;
+
+    border:0;
+
+    border-radius:8px;
+
+    background:#475569;
+
+    color:white;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+}
+
+
+.cancel-btn:hover{
+
+    background:#334155;
+
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
 
 @media(max-width:700px){
 
     .sidebar{
+
         position:static;
+
         width:100%;
+
         height:auto;
+
     }
+
 
     .main{
+
         margin-left:0;
+
     }
 
+
     .header{
+
         flex-direction:column;
+
         align-items:flex-start;
+
         gap:15px;
+
     }
 
 }
@@ -193,124 +557,372 @@ body{
 
 <body>
 
+
+<!-- =========================================
+     SIDEBAR
+========================================= -->
+
 <div class="sidebar">
 
+
     <div class="logo">
+
         Face<span>Attend</span>
+
     </div>
+
 
     <div class="nav">
 
+
         <a href="dashboard.html">
+
             🏠 Dashboard
+
         </a>
 
-        <a href="students.html" class="active">
+
+        <a
+            href="students.html"
+            class="active"
+        >
+
             👨‍🎓 Students
+
         </a>
+
 
         <a href="calendar.html">
+
             📅 Calendar
+
         </a>
+
 
         <a href="take-attendance.html">
+
             📷 Take Attendance
+
         </a>
+
 
         <a href="attendance.html">
+
             📊 Reports
+
         </a>
 
-        <a class="logout" onclick="logout()">
+
+        <a
+            class="logout"
+            onclick="logout()"
+        >
+
             ↪ Logout
+
         </a>
+
 
     </div>
+
 
 </div>
 
 
+<!-- =========================================
+     MAIN
+========================================= -->
+
 <div class="main">
+
 
     <div class="header">
 
+
         <div>
 
+
             <h1>
+
                 Students
+
             </h1>
 
+
             <p>
+
                 Manage student accounts
+
             </p>
 
+
         </div>
+
 
         <button
             class="btn"
             onclick="addStudent()"
         >
+
             + Add Student
+
         </button>
+
 
     </div>
 
+
+    <!-- =====================================
+         STUDENT TABLE
+    ====================================== -->
 
     <div class="panel">
 
+
         <div class="table-wrap">
+
 
             <table class="table">
 
+
                 <thead>
+
 
                     <tr>
 
+
                         <th>
+
                             Student ID
+
                         </th>
 
+
                         <th>
+
                             Name
+
                         </th>
 
+
                         <th>
+
                             Email
+
                         </th>
 
+
                         <th>
+
                             Face Status
+
                         </th>
 
+
                         <th>
+
                             Action
+
                         </th>
+
 
                     </tr>
 
+
                 </thead>
+
 
                 <tbody id="studentRows">
 
+
                 </tbody>
+
 
             </table>
 
+
         </div>
 
+
     </div>
+
+
+</div>
+
+
+<!-- =========================================
+     ADD STUDENT MODAL
+========================================= -->
+
+<div
+    id="addStudentModal"
+    class="modal"
+>
+
+
+    <div class="modal-box">
+
+
+        <h2>
+
+            Add Student
+
+        </h2>
+
+
+        <form id="addStudentForm">
+
+
+            <!-- STUDENT ID -->
+
+            <div class="form-group">
+
+
+                <label>
+
+                    Student ID
+
+                </label>
+
+
+                <input
+                    type="text"
+                    id="studentId"
+                    placeholder="Enter student ID"
+                    required
+                >
+
+
+            </div>
+
+
+            <!-- NAME -->
+
+            <div class="form-group">
+
+
+                <label>
+
+                    Student Name
+
+                </label>
+
+
+                <input
+                    type="text"
+                    id="studentName"
+                    placeholder="Enter student name"
+                    required
+                >
+
+
+            </div>
+
+
+            <!-- EMAIL -->
+
+            <div class="form-group">
+
+
+                <label>
+
+                    Email
+
+                </label>
+
+
+                <input
+                    type="email"
+                    id="studentEmail"
+                    placeholder="Enter email"
+                >
+
+
+            </div>
+
+
+            <!-- PASSWORD -->
+
+            <div class="form-group">
+
+
+                <label>
+
+                    Password
+
+                </label>
+
+
+                <input
+                    type="password"
+                    id="studentPassword"
+                    placeholder="Enter password"
+                    required
+                >
+
+
+            </div>
+
+
+            <!-- BUTTONS -->
+
+            <div class="modal-actions">
+
+
+                <button
+                    type="button"
+                    class="cancel-btn"
+                    onclick="closeAddStudentModal()"
+                >
+
+                    Cancel
+
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="btn"
+                >
+
+                    Add Student
+
+                </button>
+
+
+            </div>
+
+
+        </form>
+
+
+    </div>
+
 
 </div>
 
 
 <script>
 
-const API = "http://localhost:5000/api";
 
+// ==========================================
+// API
+// ==========================================
+
+const API =
+    "http://localhost:5000/api";
+
+
+// ==========================================
+// AUTH CHECK
+// ==========================================
 
 if(
+
     !localStorage.getItem("token") ||
+
     localStorage.getItem("role") !== "admin"
+
 ){
 
     location.href =
@@ -319,15 +931,24 @@ if(
 }
 
 
-function headers(json=false){
+// ==========================================
+// HEADERS
+// ==========================================
+
+function headers(json = false){
 
     const h = {
 
         Authorization:
+
             "Bearer " +
-            localStorage.getItem("token")
+
+            localStorage.getItem(
+                "token"
+            )
 
     };
+
 
     if(json){
 
@@ -336,10 +957,15 @@ function headers(json=false){
 
     }
 
+
     return h;
 
 }
 
+
+// ==========================================
+// LOGOUT
+// ==========================================
 
 function logout(){
 
@@ -351,46 +977,67 @@ function logout(){
 }
 
 
-/* =========================================
-   LOAD STUDENTS
-========================================= */
+// ==========================================
+// LOAD STUDENTS
+// ==========================================
 
 async function loadStudents(){
 
     try{
 
         const response =
+
             await fetch(
+
                 API + "/students",
+
                 {
+
                     headers:
                         headers()
+
                 }
+
             );
 
 
         const data =
+
             await response.json();
 
 
         if(!response.ok){
 
             throw new Error(
-                data.message
+
+                data.message ||
+
+                "Failed to load students"
+
             );
 
         }
 
 
         const rows =
+
             document.getElementById(
                 "studentRows"
             );
 
 
-        if(data.students.length === 0){
+        // ----------------------------------
+        // NO STUDENTS
+        // ----------------------------------
+
+        if(
+
+            data.students.length === 0
+
+        ){
 
             rows.innerHTML = `
+
                 <tr>
 
                     <td
@@ -403,6 +1050,7 @@ async function loadStudents(){
                     </td>
 
                 </tr>
+
             `;
 
             return;
@@ -410,39 +1058,67 @@ async function loadStudents(){
         }
 
 
+        // ----------------------------------
+        // STUDENT ROWS
+        // ----------------------------------
+
         rows.innerHTML =
-            data.students.map(
-                student => `
+
+            data.students
+
+                .map(
+
+                    student => `
 
                 <tr>
 
+
                     <td>
+
                         ${student.userId}
+
                     </td>
 
+
                     <td>
+
                         ${student.name}
+
                     </td>
+
 
                     <td>
+
                         ${student.email || "-"}
+
                     </td>
 
-                    <td class="${
-                        student.faceRegistered
-                        ? "success"
-                        : "warning"
-                    }">
+
+                    <td
+                        class="${
+                            student.faceRegistered
+
+                            ? "success"
+
+                            : "warning"
+                        }"
+                    >
 
                         ${
                             student.faceRegistered
+
                             ? "Registered"
+
                             : "Pending"
                         }
 
                     </td>
 
+
                     <td>
+
+
+                        <!-- FACE BUTTON -->
 
                         ${
                             student.faceRegistered
@@ -450,203 +1126,590 @@ async function loadStudents(){
                             ?
 
                             `
-                            <button
-                                class="change-btn"
-                                onclick="selectFace(
-                                    '${student._id}',
-                                    '${student.name}'
-                                )"
-                            >
-                                Change Face
-                            </button>
+
+                                <button
+                                    class="change-btn"
+                                    onclick="selectFace(
+                                        '${student._id}',
+                                        '${student.name}'
+                                    )"
+                                >
+
+                                    Change Face
+
+                                </button>
+
                             `
 
                             :
 
                             `
-                            <button
-                                class="upload-btn"
-                                onclick="selectFace(
-                                    '${student._id}',
-                                    '${student.name}'
-                                )"
-                            >
-                                Upload Face
-                            </button>
+
+                                <button
+                                    class="upload-btn"
+                                    onclick="selectFace(
+                                        '${student._id}',
+                                        '${student.name}'
+                                    )"
+                                >
+
+                                    Upload Face
+
+                                </button>
+
                             `
                         }
 
+
+                        <!-- DELETE BUTTON -->
+
+                        <button
+                            class="delete-btn"
+                            onclick="deleteStudent(
+                                '${student._id}',
+                                '${student.name}'
+                            )"
+                        >
+
+                            Delete
+
+                        </button>
+
+
                     </td>
+
 
                 </tr>
 
-                `
-            )
-            .join("");
+            `
+
+                )
+
+                .join("");
 
     }
 
     catch(error){
 
-        alert(error.message);
+        console.error(
+
+            "LOAD STUDENTS ERROR:",
+
+            error
+
+        );
+
+
+        alert(
+
+            error.message
+
+        );
 
     }
 
 }
 
 
-/* =========================================
-   CREATE STUDENT
-========================================= */
+// ==========================================
+// OPEN ADD STUDENT MODAL
+// ==========================================
 
-async function addStudent(){
+function addStudent(){
 
-    const userId =
-        prompt("Student ID:");
+    document
+        .getElementById(
+            "addStudentModal"
+        )
+        .style.display =
+        "flex";
 
-    if(!userId)
+
+    document
+        .getElementById(
+            "studentId"
+        )
+        .focus();
+
+}
+
+
+// ==========================================
+// CLOSE ADD STUDENT MODAL
+// ==========================================
+
+function closeAddStudentModal(){
+
+    document
+        .getElementById(
+            "addStudentModal"
+        )
+        .style.display =
+        "none";
+
+
+    document
+        .getElementById(
+            "addStudentForm"
+        )
+        .reset();
+
+}
+
+
+// ==========================================
+// CREATE STUDENT
+// ==========================================
+
+document
+    .getElementById(
+        "addStudentForm"
+    )
+    .addEventListener(
+
+        "submit",
+
+        async function(event){
+
+            event.preventDefault();
+
+
+            const userId =
+
+                document
+                    .getElementById(
+                        "studentId"
+                    )
+                    .value
+                    .trim();
+
+
+            const name =
+
+                document
+                    .getElementById(
+                        "studentName"
+                    )
+                    .value
+                    .trim();
+
+
+            const email =
+
+                document
+                    .getElementById(
+                        "studentEmail"
+                    )
+                    .value
+                    .trim();
+
+
+            const password =
+
+                document
+                    .getElementById(
+                        "studentPassword"
+                    )
+                    .value;
+
+
+            // ----------------------------------
+            // VALIDATION
+            // ----------------------------------
+
+            if(!userId){
+
+                alert(
+                    "Please enter Student ID"
+                );
+
+                return;
+
+            }
+
+
+            if(!name){
+
+                alert(
+                    "Please enter Student Name"
+                );
+
+                return;
+
+            }
+
+
+            if(!password){
+
+                alert(
+                    "Please enter Password"
+                );
+
+                return;
+
+            }
+
+
+            try{
+
+                const response =
+
+                    await fetch(
+
+                        API + "/students",
+
+                        {
+
+                            method:"POST",
+
+                            headers:
+                                headers(true),
+
+                            body:
+
+                                JSON.stringify({
+
+                                    userId,
+
+                                    name,
+
+                                    email,
+
+                                    password
+
+                                })
+
+                        }
+
+                    );
+
+
+                const data =
+
+                    await response.json();
+
+
+                if(!response.ok){
+
+                    throw new Error(
+
+                        data.message ||
+
+                        "Failed to create student"
+
+                    );
+
+                }
+
+
+                alert(
+
+                    "Student added successfully"
+
+                );
+
+
+                closeAddStudentModal();
+
+
+                await loadStudents();
+
+            }
+
+
+            catch(error){
+
+                console.error(
+
+                    "ADD STUDENT ERROR:",
+
+                    error
+
+                );
+
+
+                alert(
+
+                    error.message
+
+                );
+
+            }
+
+        }
+
+    );
+
+
+// ==========================================
+// CLOSE MODAL WHEN CLICKING OUTSIDE
+// ==========================================
+
+document
+    .getElementById(
+        "addStudentModal"
+    )
+    .addEventListener(
+
+        "click",
+
+        function(event){
+
+            if(
+                event.target ===
+                this
+            ){
+
+                closeAddStudentModal();
+
+            }
+
+        }
+
+    );
+
+
+// ==========================================
+// DELETE STUDENT
+// ==========================================
+
+async function deleteStudent(
+
+    studentId,
+
+    studentName
+
+){
+
+    // --------------------------------------
+    // CONFIRMATION
+    // --------------------------------------
+
+    const confirmDelete =
+
+        confirm(
+
+            "Are you sure you want to delete " +
+
+            studentName +
+
+            "?\n\n" +
+
+            "This will also delete:\n" +
+
+            "- Student account\n" +
+
+            "- Registered face\n" +
+
+            "- Attendance records"
+
+        );
+
+
+    if(!confirmDelete){
+
         return;
 
-
-    const name =
-        prompt("Student Name:");
-
-    if(!name)
-        return;
-
-
-    const email =
-        prompt("Student Email:") || "";
-
-
-    const password =
-        prompt("Student Password:");
-
-    if(!password)
-        return;
+    }
 
 
     try{
 
+        // ----------------------------------
+        // DELETE REQUEST
+        // ----------------------------------
+
         const response =
+
             await fetch(
-                API + "/students",
+
+                API +
+
+                "/students/" +
+
+                studentId,
+
                 {
-                    method:"POST",
+
+                    method:
+                        "DELETE",
 
                     headers:
-                        headers(true),
+                        headers()
 
-                    body:
-                        JSON.stringify({
-
-                            userId,
-                            name,
-                            email,
-                            password
-
-                        })
                 }
+
             );
 
 
         const data =
+
             await response.json();
 
+
+        // ----------------------------------
+        // ERROR
+        // ----------------------------------
 
         if(!response.ok){
 
             throw new Error(
-                data.message
+
+                data.message ||
+
+                "Failed to delete student"
+
             );
 
         }
 
 
+        // ----------------------------------
+        // SUCCESS
+        // ----------------------------------
+
         alert(
-            "Student added successfully"
+
+            data.message ||
+
+            "Student deleted successfully"
+
         );
 
 
-        loadStudents();
+        // Reload student list
+
+        await loadStudents();
 
     }
 
+
     catch(error){
 
-        alert(error.message);
+        console.error(
+
+            "DELETE STUDENT ERROR:",
+
+            error
+
+        );
+
+
+        alert(
+
+            "Delete failed: " +
+
+            error.message
+
+        );
 
     }
 
 }
 
 
-/* =========================================
-   SELECT FACE IMAGE
-========================================= */
+// ==========================================
+// SELECT FACE IMAGE
+// ==========================================
 
 function selectFace(
+
     studentId,
+
     studentName
+
 ){
 
     const input =
-        document.createElement("input");
+
+        document.createElement(
+            "input"
+        );
+
 
     input.type =
         "file";
 
+
     input.accept =
         "image/jpeg,image/png,image/jpg,image/webp";
+
 
     input.style.display =
         "none";
 
 
     input.onchange =
+
         function(){
 
             const file =
+
                 input.files[0];
 
-            if(!file)
+
+            if(!file){
+
                 return;
+
+            }
 
 
             uploadFace(
+
                 studentId,
+
                 studentName,
+
                 file
+
             );
 
         };
 
 
-    document.body.appendChild(input);
+    document.body.appendChild(
+        input
+    );
+
 
     input.click();
 
 }
 
 
-/* =========================================
-   UPLOAD FACE
-========================================= */
+// ==========================================
+// UPLOAD FACE
+// ==========================================
 
 async function uploadFace(
+
     studentId,
+
     studentName,
+
     file
+
 ){
 
     try{
 
-        /* Check file size */
+        // ----------------------------------
+        // FILE SIZE
+        // ----------------------------------
 
-        if(file.size > 5 * 1024 * 1024){
+        if(
+
+            file.size >
+
+            5 * 1024 * 1024
+
+        ){
 
             alert(
+
                 "Image must be smaller than 5 MB."
+
             );
 
             return;
@@ -654,26 +1717,35 @@ async function uploadFace(
         }
 
 
-        /* Check image type */
+        // ----------------------------------
+        // FILE TYPE
+        // ----------------------------------
 
         const allowedTypes = [
 
             "image/jpeg",
+
             "image/png",
+
             "image/jpg",
+
             "image/webp"
 
         ];
 
 
         if(
+
             !allowedTypes.includes(
                 file.type
             )
+
         ){
 
             alert(
+
                 "Please select a valid image."
+
             );
 
             return;
@@ -681,77 +1753,114 @@ async function uploadFace(
         }
 
 
+        // ----------------------------------
+        // FORM DATA
+        // ----------------------------------
+
         const formData =
+
             new FormData();
 
 
-        /*
-         * IMPORTANT:
-         *
-         * This field name must match
-         * upload.single("faceImage")
-         * in backend.
-         */
-
         formData.append(
+
             "faceImage",
+
             file
+
         );
 
 
+        // ----------------------------------
+        // SEND TO BACKEND
+        // ----------------------------------
+
         const response =
+
             await fetch(
+
                 API +
+
                 "/students/" +
+
                 studentId +
+
                 "/face",
+
                 {
-                    method:"POST",
+
+                    method:
+                        "POST",
 
                     headers:{
+
                         Authorization:
+
                             "Bearer " +
+
                             localStorage.getItem(
                                 "token"
                             )
+
                     },
 
                     body:
                         formData
+
                 }
+
             );
 
 
         const data =
+
             await response.json();
 
 
         if(!response.ok){
 
             throw new Error(
-                data.message
+
+                data.message ||
+
+                "Face upload failed"
+
             );
 
         }
 
 
         alert(
+
             "Face image uploaded successfully for " +
+
             studentName
+
         );
 
 
-        loadStudents();
+        await loadStudents();
 
     }
 
+
     catch(error){
 
-        console.error(error);
+        console.error(
+
+            "FACE UPLOAD ERROR:",
+
+            error
+
+        );
+
 
         alert(
+
             "Face upload failed: " +
+
             error.message
+
         );
 
     }
@@ -759,9 +1868,14 @@ async function uploadFace(
 }
 
 
+// ==========================================
+// INITIAL LOAD
+// ==========================================
+
 loadStudents();
 
 </script>
+
 
 </body>
 

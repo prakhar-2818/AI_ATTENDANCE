@@ -7,6 +7,8 @@ const fs = require("fs");
 const FormData = require("form-data");
 
 const User = require("../models/User");
+const Attendance = require("../models/Attendance");
+
 const { auth, adminOnly } = require("../middleware/auth");
 
 const router = express.Router();
@@ -17,12 +19,15 @@ const router = express.Router();
 // ==========================================
 
 const storage = multer.diskStorage({
+
     destination: function (req, file, cb) {
         cb(null, "uploads/");
     },
 
     filename: function (req, file, cb) {
-        const extension = path.extname(file.originalname);
+
+        const extension =
+            path.extname(file.originalname);
 
         const filename =
             req.params.id +
@@ -32,9 +37,12 @@ const storage = multer.diskStorage({
 
         cb(null, filename);
     }
+
 });
 
+
 const upload = multer({
+
     storage: storage,
 
     limits: {
@@ -50,12 +58,26 @@ const upload = multer({
             "image/webp"
         ];
 
-        if (allowedTypes.includes(file.mimetype)) {
+        if (
+            allowedTypes.includes(
+                file.mimetype
+            )
+        ) {
+
             cb(null, true);
+
         } else {
-            cb(new Error("Only image files are allowed"));
+
+            cb(
+                new Error(
+                    "Only image files are allowed"
+                )
+            );
+
         }
+
     }
+
 });
 
 
@@ -63,123 +85,318 @@ const upload = multer({
 // GET ALL STUDENTS
 // ==========================================
 
-router.get("/", auth, adminOnly, async (req, res) => {
+router.get(
+    "/",
+    auth,
+    adminOnly,
+    async (req, res) => {
 
-    try {
+        try {
 
-        const students = await User.find({
-            role: "student"
-        }).select("-passwordHash -faceEmbedding");
+            const students =
+                await User.find({
+                    role: "student"
+                }).select(
+                    "-passwordHash -faceEmbedding"
+                );
 
-        res.json({
-            success: true,
-            students: students
-        });
 
-    } catch (error) {
+            res.json({
 
-        res.status(500).json({
-            success: false,
-            message: error.message
-        });
+                success: true,
+
+                students: students
+
+            });
+
+        }
+        catch (error) {
+
+            res.status(500).json({
+
+                success: false,
+
+                message:
+                    error.message
+
+            });
+
+        }
 
     }
-
-});
+);
 
 
 // ==========================================
 // CREATE STUDENT
 // ==========================================
 
-router.post("/", auth, adminOnly, async (req, res) => {
+router.post(
+    "/",
+    auth,
+    adminOnly,
+    async (req, res) => {
 
-    try {
+        try {
 
-        const {
-            userId,
-            name,
-            email,
-            password
-        } = req.body;
+            const {
+                userId,
+                name,
+                email,
+                password
+            } = req.body;
 
-        if (!userId || !name || !password) {
 
-            return res.status(400).json({
-                success: false,
-                message: "User ID, name and password are required"
-            });
+            if (
+                !userId ||
+                !name ||
+                !password
+            ) {
 
-        }
+                return res.status(400).json({
 
-        const existingStudent =
-            await User.findOne({ userId });
+                    success: false,
 
-        if (existingStudent) {
+                    message:
+                        "User ID, name and password are required"
 
-            return res.status(400).json({
-                success: false,
-                message: "Student ID already exists"
-            });
-
-        }
-
-        const passwordHash =
-            await bcrypt.hash(password, 10);
-
-        const student = await User.create({
-
-            userId,
-            name,
-            email,
-            passwordHash,
-
-            role: "student",
-
-            faceRegistered: false,
-
-            faceImage: null,
-
-            faceEmbedding: null
-
-        });
-
-        res.status(201).json({
-
-            success: true,
-
-            message: "Student created successfully",
-
-            student: {
-
-                id: student._id,
-
-                userId: student.userId,
-
-                name: student.name,
-
-                email: student.email,
-
-                faceRegistered:
-                    student.faceRegistered
+                });
 
             }
 
-        });
 
-    } catch (error) {
+            const existingStudent =
+                await User.findOne({
+                    userId
+                });
 
-        res.status(500).json({
 
-            success: false,
+            if (existingStudent) {
 
-            message: error.message
+                return res.status(400).json({
 
-        });
+                    success: false,
+
+                    message:
+                        "Student ID already exists"
+
+                });
+
+            }
+
+
+            const passwordHash =
+                await bcrypt.hash(
+                    password,
+                    10
+                );
+
+
+            const student =
+                await User.create({
+
+                    userId,
+
+                    name,
+
+                    email,
+
+                    passwordHash,
+
+                    role: "student",
+
+                    faceRegistered: false,
+
+                    faceImage: null,
+
+                    faceEmbedding: null
+
+                });
+
+
+            res.status(201).json({
+
+                success: true,
+
+                message:
+                    "Student created successfully",
+
+                student: {
+
+                    id:
+                        student._id,
+
+                    userId:
+                        student.userId,
+
+                    name:
+                        student.name,
+
+                    email:
+                        student.email,
+
+                    faceRegistered:
+                        student.faceRegistered
+
+                }
+
+            });
+
+        }
+        catch (error) {
+
+            res.status(500).json({
+
+                success: false,
+
+                message:
+                    error.message
+
+            });
+
+        }
 
     }
+);
 
-});
+
+// ==========================================
+// DELETE STUDENT
+// ==========================================
+
+router.delete(
+    "/:id",
+    auth,
+    adminOnly,
+    async (req, res) => {
+
+        try {
+
+            // ----------------------------------
+            // FIND STUDENT
+            // ----------------------------------
+
+            const student =
+                await User.findOne({
+
+                    _id:
+                        req.params.id,
+
+                    role:
+                        "student"
+
+                });
+
+
+            if (!student) {
+
+                return res.status(404).json({
+
+                    success: false,
+
+                    message:
+                        "Student not found"
+
+                });
+
+            }
+
+
+            // ----------------------------------
+            // DELETE ATTENDANCE
+            // ----------------------------------
+
+            await Attendance.deleteMany({
+
+                studentId:
+                    student.userId
+
+            });
+
+
+            // ----------------------------------
+            // DELETE FACE IMAGE
+            // ----------------------------------
+
+            if (student.faceImage) {
+
+                try {
+
+                    if (
+                        fs.existsSync(
+                            student.faceImage
+                        )
+                    ) {
+
+                        fs.unlinkSync(
+                            student.faceImage
+                        );
+
+                    }
+
+                }
+                catch (fileError) {
+
+                    console.log(
+                        "FACE IMAGE DELETE ERROR:",
+                        fileError.message
+                    );
+
+                }
+
+            }
+
+
+            // ----------------------------------
+            // DELETE STUDENT
+            // ----------------------------------
+
+            await User.deleteOne({
+
+                _id:
+                    student._id
+
+            });
+
+
+            // ----------------------------------
+            // RESPONSE
+            // ----------------------------------
+
+            return res.json({
+
+                success: true,
+
+                message:
+                    `${student.name} deleted successfully`
+
+            });
+
+        }
+        catch (error) {
+
+            console.log(
+                "DELETE STUDENT ERROR:"
+            );
+
+            console.log(
+                error.message
+            );
+
+
+            return res.status(500).json({
+
+                success: false,
+
+                message:
+                    error.message
+
+            });
+
+        }
+
+    }
+);
 
 
 // ==========================================
@@ -197,7 +414,7 @@ router.post(
         try {
 
             // ----------------------------------
-            // Check uploaded image
+            // CHECK IMAGE
             // ----------------------------------
 
             if (!req.file) {
@@ -206,7 +423,8 @@ router.post(
 
                     success: false,
 
-                    message: "Face image is required"
+                    message:
+                        "Face image is required"
 
                 });
 
@@ -214,15 +432,17 @@ router.post(
 
 
             // ----------------------------------
-            // Find student
+            // FIND STUDENT
             // ----------------------------------
 
             const student =
                 await User.findOne({
 
-                    _id: req.params.id,
+                    _id:
+                        req.params.id,
 
-                    role: "student"
+                    role:
+                        "student"
 
                 });
 
@@ -233,7 +453,8 @@ router.post(
 
                     success: false,
 
-                    message: "Student not found"
+                    message:
+                        "Student not found"
 
                 });
 
@@ -241,15 +462,18 @@ router.post(
 
 
             // ----------------------------------
-            // Create multipart form
+            // CREATE FORM DATA
             // ----------------------------------
 
-            const form = new FormData();
+            const form =
+                new FormData();
 
 
             form.append(
                 "image",
-                fs.createReadStream(req.file.path),
+                fs.createReadStream(
+                    req.file.path
+                ),
                 {
 
                     filename:
@@ -263,7 +487,7 @@ router.post(
 
 
             // ----------------------------------
-            // Send image to Python AI
+            // SEND TO PYTHON AI
             // ----------------------------------
 
             const aiResponse =
@@ -284,7 +508,8 @@ router.post(
                         maxBodyLength:
                             Infinity,
 
-                        timeout: 30000
+                        timeout:
+                            30000
 
                     }
 
@@ -296,10 +521,35 @@ router.post(
 
 
             // ----------------------------------
-            // AI validation
+            // AI VALIDATION
             // ----------------------------------
 
             if (!aiData.success) {
+
+                try {
+
+                    if (
+                        fs.existsSync(
+                            req.file.path
+                        )
+                    ) {
+
+                        fs.unlinkSync(
+                            req.file.path
+                        );
+
+                    }
+
+                }
+                catch (fileError) {
+
+                    console.log(
+                        "UPLOAD CLEANUP ERROR:",
+                        fileError.message
+                    );
+
+                }
+
 
                 return res.status(400).json({
 
@@ -314,12 +564,14 @@ router.post(
 
 
             // ----------------------------------
-            // Check embedding
+            // CHECK EMBEDDING
             // ----------------------------------
 
             if (
                 !aiData.embedding ||
-                !Array.isArray(aiData.embedding)
+                !Array.isArray(
+                    aiData.embedding
+                )
             ) {
 
                 return res.status(500).json({
@@ -335,7 +587,44 @@ router.post(
 
 
             // ----------------------------------
-            // Save student face data
+            // DELETE OLD FACE IMAGE
+            // ----------------------------------
+
+            if (
+                student.faceImage &&
+                student.faceImage !==
+                    req.file.path
+            ) {
+
+                try {
+
+                    if (
+                        fs.existsSync(
+                            student.faceImage
+                        )
+                    ) {
+
+                        fs.unlinkSync(
+                            student.faceImage
+                        );
+
+                    }
+
+                }
+                catch (fileError) {
+
+                    console.log(
+                        "OLD FACE IMAGE DELETE ERROR:",
+                        fileError.message
+                    );
+
+                }
+
+            }
+
+
+            // ----------------------------------
+            // SAVE FACE DATA
             // ----------------------------------
 
             student.faceImage =
@@ -352,7 +641,7 @@ router.post(
 
 
             // ----------------------------------
-            // Success response
+            // RESPONSE
             // ----------------------------------
 
             res.json({
@@ -364,7 +653,8 @@ router.post(
 
                 student: {
 
-                    id: student._id,
+                    id:
+                        student._id,
 
                     userId:
                         student.userId,
@@ -382,8 +672,8 @@ router.post(
 
             });
 
-
-        } catch (error) {
+        }
+        catch (error) {
 
             console.log(
                 "FACE REGISTRATION ERROR:"
@@ -393,6 +683,38 @@ router.post(
                 error.response?.data ||
                 error.message
             );
+
+
+            if (
+                req.file &&
+                req.file.path
+            ) {
+
+                try {
+
+                    if (
+                        fs.existsSync(
+                            req.file.path
+                        )
+                    ) {
+
+                        fs.unlinkSync(
+                            req.file.path
+                        );
+
+                    }
+
+                }
+                catch (fileError) {
+
+                    console.log(
+                        "ERROR CLEANING UP FILE:",
+                        fileError.message
+                    );
+
+                }
+
+            }
 
 
             res.status(500).json({
@@ -427,9 +749,11 @@ router.patch(
             const student =
                 await User.findOne({
 
-                    _id: req.params.id,
+                    _id:
+                        req.params.id,
 
-                    role: "student"
+                    role:
+                        "student"
 
                 });
 
@@ -440,7 +764,8 @@ router.patch(
 
                     success: false,
 
-                    message: "Student not found"
+                    message:
+                        "Student not found"
 
                 });
 
@@ -451,11 +776,44 @@ router.patch(
                 req.body.registered === true;
 
 
-            if (!student.faceRegistered) {
+            if (
+                !student.faceRegistered
+            ) {
 
-                student.faceImage = null;
+                if (student.faceImage) {
 
-                student.faceEmbedding = null;
+                    try {
+
+                        if (
+                            fs.existsSync(
+                                student.faceImage
+                            )
+                        ) {
+
+                            fs.unlinkSync(
+                                student.faceImage
+                            );
+
+                        }
+
+                    }
+                    catch (fileError) {
+
+                        console.log(
+                            "FACE IMAGE DELETE ERROR:",
+                            fileError.message
+                        );
+
+                    }
+
+                }
+
+
+                student.faceImage =
+                    null;
+
+                student.faceEmbedding =
+                    null;
 
             }
 
@@ -475,8 +833,8 @@ router.patch(
 
             });
 
-
-        } catch (error) {
+        }
+        catch (error) {
 
             res.status(500).json({
 

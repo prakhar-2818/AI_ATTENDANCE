@@ -1,44 +1,53 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
-<title>Take Attendance | FaceAttend</title>
+<title>Take Attendance - FaceAttend</title>
 
 <style>
 
 *{
+    box-sizing:border-box;
     margin:0;
     padding:0;
-    box-sizing:border-box;
 }
 
 body{
-    font-family:Arial,sans-serif;
+    font-family:Arial, sans-serif;
     background:#0f172a;
     color:white;
 }
+
+/* =========================
+   SIDEBAR
+========================= */
 
 .sidebar{
     position:fixed;
     left:0;
     top:0;
+
     width:240px;
     height:100vh;
-    background:#111827;
-    border-right:1px solid #334155;
+
+    background:#020617;
+    border-right:1px solid #1e293b;
+
     padding:25px 15px;
 }
 
 .logo{
-    font-size:24px;
+    font-size:25px;
     font-weight:bold;
-    padding:10px 15px 30px;
+    text-align:center;
+
+    margin-bottom:35px;
 }
 
 .logo span{
@@ -47,31 +56,48 @@ body{
 
 .nav a{
     display:block;
-    padding:13px 15px;
-    margin-bottom:7px;
-    color:#94a3b8;
+
+    color:#cbd5e1;
     text-decoration:none;
+
+    padding:13px 15px;
+
     border-radius:8px;
+
+    margin-bottom:7px;
+
+    cursor:pointer;
 }
 
 .nav a:hover,
 .nav a.active{
-    background:#2563eb;
+    background:#1e293b;
     color:white;
 }
 
-.logout{
-    color:#fca5a5!important;
-    cursor:pointer;
+.nav .logout{
+    margin-top:30px;
+    color:#f87171;
 }
+
+/* =========================
+   MAIN
+========================= */
 
 .main{
     margin-left:240px;
-    padding:30px;
+
+    min-height:100vh;
+
+    padding:35px;
 }
 
 .header{
     margin-bottom:25px;
+}
+
+.header h1{
+    font-size:30px;
 }
 
 .header p{
@@ -79,13 +105,25 @@ body{
     margin-top:7px;
 }
 
+/* =========================
+   PANEL
+========================= */
+
 .panel{
     background:#1e293b;
+
     border:1px solid #334155;
+
     border-radius:15px;
+
     padding:25px;
+
     margin-bottom:20px;
 }
+
+/* =========================
+   CAMERA
+========================= */
 
 .camera-box{
     text-align:center;
@@ -94,30 +132,60 @@ body{
 video{
     width:100%;
     max-width:760px;
+
     height:430px;
+
     object-fit:cover;
+
     background:#020617;
+
     border:1px solid #334155;
+
     border-radius:14px;
+
     display:block;
+
     margin:auto;
 }
 
+/* =========================
+   BUTTONS
+========================= */
+
 .btn{
     padding:12px 18px;
+
     border:0;
+
     border-radius:8px;
+
     background:#2563eb;
+
     color:white;
+
     font-weight:bold;
+
     cursor:pointer;
+
     margin-top:18px;
+}
+
+.btn:hover{
+    background:#1d4ed8;
 }
 
 .danger{
     background:#7f1d1d;
     margin-left:8px;
 }
+
+.danger:hover{
+    background:#991b1b;
+}
+
+/* =========================
+   STATUS
+========================= */
 
 .status{
     margin-top:15px;
@@ -134,17 +202,29 @@ video{
 
 .result{
     padding:15px;
+
     background:#0f172a;
+
     border:1px solid #334155;
+
     border-radius:10px;
+
     margin-top:15px;
+
+    min-height:60px;
 }
+
+/* =========================
+   RESPONSIVE
+========================= */
 
 @media(max-width:700px){
 
     .sidebar{
         position:static;
+
         width:100%;
+
         height:auto;
     }
 
@@ -166,11 +246,16 @@ video{
 <body>
 
 
+<!-- =========================================
+     SIDEBAR
+========================================= -->
+
 <div class="sidebar">
 
     <div class="logo">
         Face<span>Attend</span>
     </div>
+
 
     <div class="nav">
 
@@ -178,32 +263,46 @@ video{
             🏠 Dashboard
         </a>
 
+
         <a href="students.html">
             👨‍🎓 Students
         </a>
+
 
         <a href="calendar.html">
             📅 Calendar
         </a>
 
+
         <a href="take-attendance.html"
            class="active">
+
             📷 Take Attendance
+
         </a>
+
 
         <a href="attendance.html">
             📊 Reports
         </a>
 
+
         <a class="logout"
            onclick="logout()">
+
             ↪ Logout
+
         </a>
 
     </div>
 
 </div>
 
+
+
+<!-- =========================================
+     MAIN
+========================================= -->
 
 <div class="main">
 
@@ -215,11 +314,16 @@ video{
         </h1>
 
         <p>
-            Students come one by one in front of the camera
+            AI Face Recognition Attendance
         </p>
 
     </div>
 
+
+
+    <!-- =====================================
+         ACTIVE CLASS
+    ====================================== -->
 
     <div class="panel">
 
@@ -227,93 +331,97 @@ video{
             Current Class
         </h2>
 
-        <br>
-
-        <div id="activeClass"
-             class="status">
-
-            Checking current timetable...
-
-        </div>
-
-    </div>
-
-
-    <div class="panel camera-box">
-
-        <video
-            id="camera"
-            autoplay
-            playsinline
-            muted
-        ></video>
-
-
-        <button
-            class="btn"
-            id="startBtn"
-            onclick="startCamera()"
-        >
-            Start Attendance
-        </button>
-
-
-        <button
-            class="btn danger"
-            id="stopBtn"
-            onclick="stopCamera()"
-            style="display:none"
-        >
-            Stop Attendance
-        </button>
-
-
         <div
-            id="cameraStatus"
-            class="status"
-        >
-            Camera is off
+            id="activeClass"
+            class="status">
+
+            Checking current class...
+
         </div>
 
     </div>
 
+
+
+    <!-- =====================================
+         CAMERA
+    ====================================== -->
 
     <div class="panel">
 
-        <h2>
-            Live Attendance
-        </h2>
+        <div class="camera-box">
 
-        <div
-            id="result"
-            class="result"
-        >
-            No student processed yet.
+            <video
+                id="video"
+                autoplay
+                muted
+                playsinline>
+            </video>
+
+
+            <div>
+
+                <button
+                    id="startBtn"
+                    class="btn"
+                    onclick="startCamera()">
+
+                    ▶ Start Camera
+
+                </button>
+
+
+                <button
+                    id="stopBtn"
+                    class="btn danger"
+                    onclick="stopCamera()"
+                    disabled>
+
+                    ■ Stop Camera
+
+                </button>
+
+            </div>
+
+
+            <div
+                id="cameraStatus"
+                class="status">
+
+                Camera stopped
+
+            </div>
+
+
+            <div
+                id="result"
+                class="result">
+
+                Waiting for camera...
+
+            </div>
+
         </div>
 
-        <br>
-
-        <p>
-            Present this session:
-            <b id="count">0</b>
-        </p>
-
     </div>
-
 
 </div>
 
 
+
 <script>
 
+/* ==========================================
+   API
+========================================== */
 
 const API =
     "http://localhost:5000/api";
 
 
-/*
-    Admin authentication
-*/
+/* ==========================================
+   AUTH CHECK
+========================================== */
 
 if(
     !localStorage.getItem("token") ||
@@ -326,9 +434,9 @@ if(
 }
 
 
-/*
-    Logout
-*/
+/* ==========================================
+   LOGOUT
+========================================== */
 
 function logout(){
 
@@ -340,9 +448,9 @@ function logout(){
 }
 
 
-/*
-    Authorization headers
-*/
+/* ==========================================
+   HEADERS
+========================================== */
 
 function headers(){
 
@@ -350,18 +458,16 @@ function headers(){
 
         Authorization:
             "Bearer " +
-            localStorage.getItem(
-                "token"
-            )
+            localStorage.getItem("token")
 
     };
 
 }
 
 
-/*
-    Global variables
-*/
+/* ==========================================
+   VARIABLES
+========================================== */
 
 let stream = null;
 
@@ -371,17 +477,7 @@ let running = false;
 
 let sessionCount = 0;
 
-
-/*
-    Recognition state
-*/
-
 let recognizing = false;
-
-
-/*
-    Liveness state
-*/
 
 let livenessRunning = false;
 
@@ -390,9 +486,22 @@ let challengeSequence = [];
 let challengeIndex = 0;
 
 
-/*
-    Get current subject
-*/
+/* ==========================================
+   WAIT
+========================================== */
+
+function wait(ms){
+
+    return new Promise(
+        resolve => setTimeout(resolve, ms)
+    );
+
+}
+
+
+/* ==========================================
+   LOAD ACTIVE CLASS
+========================================== */
 
 async function loadActiveClass(){
 
@@ -400,11 +509,9 @@ async function loadActiveClass(){
 
         const response =
             await fetch(
-                API +
-                "/calendar/active",
+                API + "/calendar/active",
                 {
-                    headers:
-                        headers()
+                    headers:headers()
                 }
             );
 
@@ -413,52 +520,34 @@ async function loadActiveClass(){
             await response.json();
 
 
-        if(!response.ok){
-
-            throw new Error(
-                data.message
-            );
-
-        }
-
-
-        if(data.active){
+        if(
+            data.success &&
+            data.active
+        ){
 
             activeSubject =
                 data.slot.subject;
 
 
             document
-                .getElementById(
-                    "activeClass"
-                )
+                .getElementById("activeClass")
                 .innerHTML = `
 
                     <span class="success">
-                        🟢 Active Class
+
+                        📚 ${data.slot.subject}
+
                     </span>
 
-                    <br><br>
-
-                    <b>
-                        ${data.slot.subject}
-                    </b>
-
                     <br>
 
-                    ${formatTime(
-                        data.slot.startTime
-                    )}
+                    <span style="color:#94a3b8">
 
-                    -
+                        ${data.slot.startTime}
+                        -
+                        ${data.slot.endTime}
 
-                    ${formatTime(
-                        data.slot.endTime
-                    )}
-
-                    <br>
-
-                    ${data.day}
+                    </span>
 
                 `;
 
@@ -466,50 +555,52 @@ async function loadActiveClass(){
 
         else{
 
-            activeSubject =
-                null;
+            activeSubject = null;
 
 
             document
-                .getElementById(
-                    "activeClass"
-                )
+                .getElementById("activeClass")
                 .innerHTML = `
 
                     <span class="warning">
-                        No active subject right now.
+
+                        ⚠ No active class right now
+
                     </span>
-
-                    <br><br>
-
-                    Current time:
-                    ${formatTime(
-                        data.currentTime
-                    )}
 
                 `;
 
         }
 
-
     }
+
     catch(error){
 
+        console.log(
+            "Active class error:",
+            error
+        );
+
         document
-            .getElementById(
-                "activeClass"
-            )
-            .textContent =
-            error.message;
+            .getElementById("activeClass")
+            .innerHTML = `
+
+                <span class="warning">
+
+                    Unable to load current class
+
+                </span>
+
+            `;
 
     }
 
 }
 
 
-/*
-    Start camera
-*/
+/* ==========================================
+   START CAMERA
+========================================== */
 
 async function startCamera(){
 
@@ -519,7 +610,7 @@ async function startCamera(){
     if(!activeSubject){
 
         alert(
-            "There is no active subject right now."
+            "There is no active class right now."
         );
 
         return;
@@ -530,64 +621,57 @@ async function startCamera(){
     try{
 
         stream =
-            await navigator
-                .mediaDevices
-                .getUserMedia({
+            await navigator.mediaDevices.getUserMedia({
 
-                    video:{
-                        facingMode:"user"
-                    },
+                video:{
+                    facingMode:"user"
+                },
 
-                    audio:false
+                audio:false
 
-                });
+            });
 
 
         const video =
-            document.getElementById(
-                "camera"
-            );
+            document.getElementById("video");
 
 
         video.srcObject =
             stream;
 
 
-        running =
-            true;
+        running = true;
 
 
         document
-            .getElementById(
-                "startBtn"
-            )
-            .style.display =
-            "none";
+            .getElementById("startBtn")
+            .disabled = true;
 
 
         document
-            .getElementById(
-                "stopBtn"
-            )
-            .style.display =
-            "inline-block";
+            .getElementById("stopBtn")
+            .disabled = false;
 
 
         document
-            .getElementById(
-                "cameraStatus"
-            )
-            .innerHTML =
+            .getElementById("cameraStatus")
+            .innerHTML = `
 
-            `<span class="success">
+                <span class="success">
 
-                🟢 Camera Active
+                    🟢 Camera running
 
-            </span>
+                </span>
 
-            <br>
+            `;
 
-            Students can come one by one.
+
+        document
+            .getElementById("result")
+            .innerHTML = `
+
+                Looking for student...
+
             `;
 
 
@@ -597,9 +681,14 @@ async function startCamera(){
 
     catch(error){
 
+        console.log(
+            "Camera error:",
+            error
+        );
+
+
         alert(
-            "Camera access failed: " +
-            error.message
+            "Camera permission required."
         );
 
     }
@@ -607,20 +696,17 @@ async function startCamera(){
 }
 
 
-/*
-    Stop camera
-*/
+/* ==========================================
+   STOP CAMERA
+========================================== */
 
 function stopCamera(){
 
-    running =
-        false;
+    running = false;
 
-    recognizing =
-        false;
+    recognizing = false;
 
-    livenessRunning =
-        false;
+    livenessRunning = false;
 
 
     if(stream){
@@ -628,66 +714,62 @@ function stopCamera(){
         stream
             .getTracks()
             .forEach(
-                track =>
-                    track.stop()
+                track => track.stop()
             );
+
+        stream = null;
 
     }
 
 
-    stream =
-        null;
+    document
+        .getElementById("video")
+        .srcObject = null;
 
 
     document
-        .getElementById(
-            "camera"
-        )
-        .srcObject =
-        null;
+        .getElementById("startBtn")
+        .disabled = false;
 
 
     document
-        .getElementById(
-            "startBtn"
-        )
-        .style.display =
-        "inline-block";
+        .getElementById("stopBtn")
+        .disabled = true;
 
 
     document
-        .getElementById(
-            "stopBtn"
-        )
-        .style.display =
-        "none";
+        .getElementById("cameraStatus")
+        .innerHTML = `
+
+            Camera stopped
+
+        `;
 
 
     document
-        .getElementById(
-            "cameraStatus"
-        )
-        .textContent =
-        "Camera is off.";
+        .getElementById("result")
+        .innerHTML = `
+
+            Camera stopped.
+
+        `;
 
 }
 
 
-/*
-    Capture one frame
-*/
+/* ==========================================
+   CAPTURE FRAME
+========================================== */
 
 async function captureFrame(){
 
     const video =
-        document.getElementById(
-            "camera"
-        );
+        document.getElementById("video");
 
 
     if(
-        !video.videoWidth ||
-        !video.videoHeight
+        !video ||
+        video.readyState < 2
     ){
 
         return null;
@@ -696,22 +778,19 @@ async function captureFrame(){
 
 
     const canvas =
-        document.createElement(
-            "canvas"
-        );
+        document.createElement("canvas");
 
 
     canvas.width =
         video.videoWidth;
+
 
     canvas.height =
         video.videoHeight;
 
 
     const ctx =
-        canvas.getContext(
-            "2d"
-        );
+        canvas.getContext("2d");
 
 
     ctx.drawImage(
@@ -727,8 +806,7 @@ async function captureFrame(){
         resolve => {
 
             canvas.toBlob(
-                blob =>
-                    resolve(blob),
+                blob => resolve(blob),
                 "image/jpeg",
                 0.85
             );
@@ -739,71 +817,30 @@ async function captureFrame(){
 }
 
 
-/*
-    FACE RECOGNITION LOOP
-
-    Face Recognition
-          ↓
-    Show student
-          ↓
-    Wait
-          ↓
-    Liveness
-          ↓
-    Attendance
-*/
+/* ==========================================
+   FACE RECOGNITION LOOP
+========================================== */
 
 async function startRecognitionLoop(){
 
     while(running){
-
-        /*
-            Don't recognize while
-            liveness is running.
-        */
 
         if(
             recognizing ||
             livenessRunning
         ){
 
-            await wait(500);
+            await wait(300);
 
             continue;
 
         }
 
 
-        recognizing =
-            true;
+        recognizing = true;
 
 
         try{
-
-            const video =
-                document.getElementById(
-                    "camera"
-                );
-
-
-            if(
-                video.readyState <
-                HTMLMediaElement.HAVE_CURRENT_DATA
-            ){
-
-                recognizing =
-                    false;
-
-                await wait(500);
-
-                continue;
-
-            }
-
-
-            /*
-                Capture live frame
-            */
 
             const frame =
                 await captureFrame();
@@ -811,8 +848,7 @@ async function startRecognitionLoop(){
 
             if(!frame){
 
-                recognizing =
-                    false;
+                recognizing = false;
 
                 await wait(500);
 
@@ -820,10 +856,6 @@ async function startRecognitionLoop(){
 
             }
 
-
-            /*
-                Send frame to Node backend
-            */
 
             const formData =
                 new FormData();
@@ -832,28 +864,20 @@ async function startRecognitionLoop(){
             formData.append(
                 "image",
                 frame,
-                "live-frame.jpg"
+                "frame.jpg"
             );
 
 
             const response =
                 await fetch(
-
-                    API +
-                    "/attendance/recognize",
-
+                    API + "/attendance/recognize",
                     {
-
                         method:"POST",
 
-                        headers:
-                            headers(),
+                        headers:headers(),
 
-                        body:
-                            formData
-
+                        body:formData
                     }
-
                 );
 
 
@@ -861,13 +885,14 @@ async function startRecognitionLoop(){
                 await response.json();
 
 
-            /*
-                =========================
-                FACE RECOGNIZED
-                =========================
-            */
+            /* =========================
+               FACE RECOGNIZED
+            ========================= */
 
-            if(data.success){
+            if(
+                data.success &&
+                data.student
+            ){
 
                 const student =
                     data.student;
@@ -877,16 +902,8 @@ async function startRecognitionLoop(){
                     data.confidence;
 
 
-                /*
-                    STEP 1
-
-                    Show recognition result.
-                */
-
                 document
-                    .getElementById(
-                        "result"
-                    )
+                    .getElementById("result")
                     .innerHTML = `
 
                         <span class="success">
@@ -897,77 +914,29 @@ async function startRecognitionLoop(){
 
                         <br><br>
 
-                        <b>
-                            ${student.name}
-                        </b>
+                        <strong>
+
+                            ${escapeHtml(student.name)}
+
+                        </strong>
 
                         <br>
 
                         ID:
-                        ${student.userId}
-
-                        <br>
-
-                        Confidence:
-                        ${(confidence * 100).toFixed(2)}%
-
-                    `;
-
-
-                /*
-                    IMPORTANT
-
-                    Give 2 seconds so
-                    recognition result
-                    is visible.
-                */
-
-                await wait(2000);
-
-
-                /*
-                    STEP 2
-
-                    Tell user that
-                    liveness is starting.
-                */
-
-                if(!running){
-
-                    recognizing =
-                        false;
-
-                    break;
-
-                }
-
-
-                document
-                    .getElementById(
-                        "result"
-                    )
-                    .innerHTML = `
-
-                        <span class="warning">
-
-                            Starting liveness verification...
-
-                        </span>
+                        ${escapeHtml(student.userId)}
 
                         <br><br>
 
-                        Please follow the instruction.
+                        Starting liveness check...
 
                     `;
 
 
-                await wait(1500);
+                await wait(800);
 
 
                 /*
-                    STEP 3
-
-                    Run liveness.
+                    RUN EASY LIVENESS
                 */
 
                 const livenessPassed =
@@ -975,55 +944,36 @@ async function startRecognitionLoop(){
 
 
                 /*
-                    STEP 4
-
-                    Mark attendance
-                    only if liveness
-                    passed.
+                    MARK ATTENDANCE
                 */
 
                 if(livenessPassed){
 
                     await markAttendance(
-
                         student.userId,
-
                         confidence,
-
                         true
-
                     );
 
 
-                    /*
-                        Give result time
-                        to remain visible.
-                    */
-
-                    await wait(3000);
+                    await wait(2500);
 
                 }
 
             }
 
 
-            /*
-                =========================
-                FACE NOT RECOGNIZED
-                =========================
-            */
+            /* =========================
+               FACE NOT RECOGNIZED
+            ========================= */
 
             else if(
-
                 data.message ===
                 "Face not recognized"
-
             ){
 
                 document
-                    .getElementById(
-                        "result"
-                    )
+                    .getElementById("result")
                     .innerHTML = `
 
                         <span class="warning">
@@ -1037,30 +987,28 @@ async function startRecognitionLoop(){
             }
 
 
-            /*
-                =========================
-                OTHER AI MESSAGE
-                =========================
-            */
+            /* =========================
+               OTHER MESSAGE
+            ========================= */
 
             else{
 
                 document
-                    .getElementById(
-                        "result"
-                    )
+                    .getElementById("result")
                     .innerHTML = `
 
                         <span class="status">
 
-                            ${data.message}
+                            ${escapeHtml(
+                                data.message ||
+                                "Looking for face..."
+                            )}
 
                         </span>
 
                     `;
 
             }
-
 
         }
 
@@ -1074,8 +1022,7 @@ async function startRecognitionLoop(){
         }
 
 
-        recognizing =
-            false;
+        recognizing = false;
 
 
         await wait(1000);
@@ -1085,149 +1032,108 @@ async function startRecognitionLoop(){
 }
 
 
-/*
-    =========================
-    CREATE RANDOM CHALLENGE
-    =========================
-
-    Example:
-
-    blink → left → right
-
-    OR
-
-    right → blink → left
-*/
+/* ==========================================
+   EASY RANDOM CHALLENGE
+========================================== */
 
 function createChallenge(){
 
     const actions = [
 
         "blink",
-
         "left",
-
         "right"
 
     ];
 
 
-    for(
+    /*
+       ONLY ONE ACTION
+    */
 
-        let i =
-            actions.length - 1;
-
-        i > 0;
-
-        i--
-
-    ){
-
-        const j =
-            Math.floor(
-
-                Math.random() *
-                (i + 1)
-
-            );
+    const randomIndex =
+        Math.floor(
+            Math.random() *
+            actions.length
+        );
 
 
-        [
-            actions[i],
-            actions[j]
+    challengeSequence = [
 
-        ] = [
+        actions[randomIndex]
 
-            actions[j],
-            actions[i]
-
-        ];
-
-    }
+    ];
 
 
-    challengeSequence =
-        actions;
-
-
-    challengeIndex =
-        0;
+    challengeIndex = 0;
 
 }
 
 
-/*
-    =========================
-    PERFORM LIVENESS ACTION
-    =========================
-*/
+/* ==========================================
+   PERFORM LIVENESS ACTION
+========================================== */
 
 async function performLivenessAction(
-
     action
-
 ){
 
-    let instruction =
-        "";
+    let instruction = "";
 
-    let detail =
-        "";
+    let detail = "";
 
 
-    /*
-        BLINK
-    */
+    /* =====================================
+       BLINK
+    ====================================== */
 
     if(action === "blink"){
 
         instruction =
-            "👁️ AANKH BAND KARO → PHIR KHOL DO";
+            "👁️ EK BAAR BLINK KARO";
 
         detail =
-            "Ek baar naturally blink karo";
+            "Normal blink karo";
 
     }
 
 
-    /*
-        LEFT
-    */
+    /* =====================================
+       LEFT
+    ====================================== */
 
     if(action === "left"){
 
         instruction =
-            "⬅️ APNA SIR LEFT SIDE GHUMAO";
+            "⬅️ THODA LEFT DEKHO";
 
         detail =
-            "Apne LEFT side dekho";
+            "Bas halka sa left dekho";
 
     }
 
 
-    /*
-        RIGHT
-    */
+    /* =====================================
+       RIGHT
+    ====================================== */
 
     if(action === "right"){
 
         instruction =
-            "➡️ APNA SIR RIGHT SIDE GHUMAO";
+            "➡️ THODA RIGHT DEKHO";
 
         detail =
-            "Apne RIGHT side dekho";
+            "Bas halka sa right dekho";
 
     }
 
 
-    /*
-        Show instruction
-    */
+    /* =====================================
+       SHOW INSTRUCTION
+    ====================================== */
 
     document
-        .getElementById(
-            "result"
-        )
+        .getElementById("result")
         .innerHTML = `
 
             <span
@@ -1241,9 +1147,7 @@ async function performLivenessAction(
 
             <br><br>
 
-            <span
-                style="color:#94a3b8;"
-            >
+            <span style="color:#94a3b8">
 
                 ${detail}
 
@@ -1256,22 +1160,25 @@ async function performLivenessAction(
         `;
 
 
+    /* =====================================
+       FORM DATA
+    ====================================== */
+
     const formData =
         new FormData();
 
 
     /*
-        Capture 10 frames
+       CAPTURE 20 FRAMES
+
+       20 × 150ms
+       ≈ 3 seconds
     */
 
     for(
-
         let i = 0;
-
-        i < 10;
-
+        i < 20;
         i++
-
     ){
 
         if(!running){
@@ -1288,52 +1195,43 @@ async function performLivenessAction(
         if(frame){
 
             formData.append(
-
                 "images",
-
                 frame,
-
                 `frame-${i}.jpg`
-
             );
 
         }
 
 
-        await wait(200);
+        await wait(150);
 
     }
 
 
-    /*
-        Send action
-    */
+    /* =====================================
+       ACTION
+    ====================================== */
 
     formData.append(
-
         "action",
-
         action
-
     );
 
+
+    /* =====================================
+       SEND TO PYTHON
+    ====================================== */
 
     try{
 
         const response =
             await fetch(
-
                 "http://127.0.0.1:8000/liveness",
-
                 {
-
                     method:"POST",
 
-                    body:
-                        formData
-
+                    body:formData
                 }
-
             );
 
 
@@ -1342,19 +1240,14 @@ async function performLivenessAction(
 
 
         console.log(
-
             "Liveness response:",
-
             data
-
         );
 
 
         if(
-
             data.success &&
             data.passed
-
         ){
 
             return true;
@@ -1369,11 +1262,8 @@ async function performLivenessAction(
     catch(error){
 
         console.log(
-
             "Liveness error:",
-
             error
-
         );
 
 
@@ -1384,11 +1274,9 @@ async function performLivenessAction(
 }
 
 
-/*
-    =========================
-    COMPLETE LIVENESS
-    =========================
-*/
+/* ==========================================
+   RUN LIVENESS
+========================================== */
 
 async function runLiveness(){
 
@@ -1399,51 +1287,32 @@ async function runLiveness(){
     }
 
 
-    livenessRunning =
-        true;
+    livenessRunning = true;
 
 
     /*
-        Generate random
-        challenge sequence.
+       CREATE ONLY ONE
+       RANDOM CHALLENGE
     */
 
     createChallenge();
 
 
     console.log(
-
         "Liveness challenge:",
-
         challengeSequence
-
     );
 
 
-    /*
-        Run:
-
-        blink
-        left
-        right
-
-        in random order.
-    */
-
     for(
-
         let i = 0;
-
         i < challengeSequence.length;
-
         i++
-
     ){
 
         if(!running){
 
-            livenessRunning =
-                false;
+            livenessRunning = false;
 
             return false;
 
@@ -1454,33 +1323,24 @@ async function runLiveness(){
             challengeSequence[i];
 
 
-        challengeIndex =
-            i;
+        challengeIndex = i;
 
 
         const passed =
             await performLivenessAction(
-
                 action
-
             );
 
-
-        /*
-            Challenge failed
-        */
 
         if(!passed){
 
             document
-                .getElementById(
-                    "result"
-                )
+                .getElementById("result")
                 .innerHTML = `
 
                     <span class="warning">
 
-                        ❌ Liveness verification failed
+                        ❌ Liveness failed
 
                     </span>
 
@@ -1491,8 +1351,7 @@ async function runLiveness(){
                 `;
 
 
-            livenessRunning =
-                false;
+            livenessRunning = false;
 
 
             return false;
@@ -1500,19 +1359,17 @@ async function runLiveness(){
         }
 
 
-        await wait(500);
+        await wait(300);
 
     }
 
 
-    /*
-        ALL CHALLENGES PASSED
-    */
+    /* =====================================
+       SUCCESS
+    ====================================== */
 
     document
-        .getElementById(
-            "result"
-        )
+        .getElementById("result")
         .innerHTML = `
 
             <span class="success">
@@ -1528,8 +1385,7 @@ async function runLiveness(){
         `;
 
 
-    livenessRunning =
-        false;
+    livenessRunning = false;
 
 
     return true;
@@ -1537,82 +1393,48 @@ async function runLiveness(){
 }
 
 
-/*
-    Utility wait
-*/
-
-function wait(ms){
-
-    return new Promise(
-
-        resolve =>
-
-            setTimeout(
-
-                resolve,
-
-                ms
-
-            )
-
-    );
-
-}
-
-
-/*
-    =========================
-    MARK ATTENDANCE
-    =========================
-*/
+/* ==========================================
+   MARK ATTENDANCE
+========================================== */
 
 async function markAttendance(
-
     studentId,
-
     confidence,
-
     livenessPassed
-
 ){
 
     try{
 
         const response =
             await fetch(
-
-                API +
-                "/attendance/mark",
-
+                API + "/attendance/mark",
                 {
-
                     method:"POST",
 
                     headers:{
-
                         ...headers(),
 
                         "Content-Type":
                             "application/json"
-
                     },
 
-                    body:
-                        JSON.stringify({
+                    body:JSON.stringify({
 
+                        studentId:
                             studentId,
 
-                            subject:
-                                activeSubject,
+                        subject:
+                            activeSubject,
 
+                        confidence:
                             confidence,
 
+                        livenessPassed:
                             livenessPassed
 
-                        })
+                    })
 
                 }
-
             );
 
 
@@ -1620,63 +1442,71 @@ async function markAttendance(
             await response.json();
 
 
-        if(!response.ok){
+        if(data.success){
 
-            throw new Error(
+            document
+                .getElementById("result")
+                .innerHTML = `
 
-                data.message
+                    <span
+                        class="success"
+                        style="font-size:22px;"
+                    >
 
-            );
+                        ✓ Attendance Marked
 
-        }
+                    </span>
 
+                    <br><br>
 
-        /*
-            Count only new attendance
-        */
+                    ${escapeHtml(
+                        data.message ||
+                        "Student marked Present"
+                    )}
 
-        if(!data.alreadyMarked){
+                `;
 
             sessionCount++;
 
-
-            document
-                .getElementById(
-                    "count"
-                )
-                .textContent =
-                sessionCount;
-
         }
 
+        else{
 
-        document
-            .getElementById(
-                "result"
-            )
-            .innerHTML = `
+            document
+                .getElementById("result")
+                .innerHTML = `
 
-                <span class="success">
+                    <span class="warning">
 
-                    ✓ ${data.message}
+                        ⚠
+                        ${escapeHtml(
+                            data.message ||
+                            "Unable to mark attendance"
+                        )}
 
-                </span>
+                    </span>
 
-            `;
+                `;
+
+        }
 
     }
 
     catch(error){
 
+        console.log(
+            "Attendance error:",
+            error
+        );
+
+
         document
-            .getElementById(
-                "result"
-            )
+            .getElementById("result")
             .innerHTML = `
 
                 <span class="warning">
 
-                    ${error.message}
+                    Attendance server error
 
                 </span>
 
@@ -1687,71 +1517,67 @@ async function markAttendance(
 }
 
 
-/*
-    Format time
-*/
+/* ==========================================
+   HTML ESCAPE
+========================================== */
 
-function formatTime(time){
+function escapeHtml(value){
 
-    let [h,m] =
-        time.split(":");
+    if(value === null ||
+       value === undefined){
 
+        return "";
 
-    h =
-        Number(h);
-
-
-    const ampm =
-        h >= 12
-        ? "PM"
-        : "AM";
+    }
 
 
-    h =
-        h % 12 || 12;
+    return String(value)
 
+        .replace(
+            /&/g,
+            "&amp;"
+        )
 
-    return h +
-        ":" +
-        m +
-        " " +
-        ampm;
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
 }
 
 
-/*
-    Load current class
-*/
+/* ==========================================
+   INITIAL LOAD
+========================================== */
 
 loadActiveClass();
 
 
 /*
-    Refresh timetable every
-    30 seconds when camera
-    is not running.
+   Refresh active class every minute
 */
 
 setInterval(
-
-    () => {
-
-        if(!running){
-
-            loadActiveClass();
-
-        }
-
-    },
-
-    30000
-
+    loadActiveClass,
+    60000
 );
 
-
 </script>
-
 
 </body>
 

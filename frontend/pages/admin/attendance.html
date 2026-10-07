@@ -4,9 +4,14 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
 <title>Attendance Reports | FaceAttend</title>
+
 
 <style>
 
@@ -16,11 +21,13 @@
     box-sizing:border-box;
 }
 
+
 body{
     font-family:Arial,sans-serif;
     background:#0f172a;
     color:white;
 }
+
 
 .sidebar{
     position:fixed;
@@ -33,15 +40,18 @@ body{
     padding:25px 15px;
 }
 
+
 .logo{
     font-size:24px;
     font-weight:bold;
     padding:10px 15px 30px;
 }
 
+
 .logo span{
     color:#3b82f6;
 }
+
 
 .nav a{
     display:block;
@@ -52,30 +62,36 @@ body{
     border-radius:8px;
 }
 
+
 .nav a:hover,
 .nav a.active{
     background:#2563eb;
     color:white;
 }
 
+
 .logout{
     color:#fca5a5!important;
     cursor:pointer;
 }
+
 
 .main{
     margin-left:240px;
     padding:30px;
 }
 
+
 .header{
     margin-bottom:25px;
 }
+
 
 .header p{
     color:#94a3b8;
     margin-top:7px;
 }
+
 
 .panel{
     background:#1e293b;
@@ -84,6 +100,7 @@ body{
     padding:25px;
 }
 
+
 .filters{
     display:flex;
     gap:10px;
@@ -91,105 +108,221 @@ body{
     margin-bottom:25px;
 }
 
+
 .filters input,
 .filters select{
+
     padding:11px;
+
     background:#0f172a;
+
     border:1px solid #475569;
+
     border-radius:8px;
+
     color:white;
+
 }
+
 
 .btn{
+
     padding:11px 17px;
+
     border:0;
+
     border-radius:8px;
+
     background:#2563eb;
+
     color:white;
+
     font-weight:bold;
+
     cursor:pointer;
+
 }
+
+
+.btn:hover{
+
+    background:#1d4ed8;
+
+}
+
 
 .cards{
+
     display:grid;
-    grid-template-columns:repeat(4,1fr);
+
+    grid-template-columns:
+        repeat(4,1fr);
+
     gap:15px;
+
     margin-bottom:25px;
+
 }
+
 
 .card{
+
     background:#0f172a;
+
     border:1px solid #334155;
+
     border-radius:12px;
+
     padding:18px;
+
 }
+
 
 .card p{
+
     color:#94a3b8;
+
     font-size:13px;
+
 }
+
 
 .card h2{
+
     margin-top:8px;
+
 }
+
 
 .table-wrap{
+
     overflow:auto;
+
 }
 
+
 .table{
+
     width:100%;
+
     border-collapse:collapse;
+
 }
+
 
 .table th,
 .table td{
+
     padding:13px;
+
     text-align:left;
-    border-bottom:1px solid #334155;
+
+    border-bottom:
+        1px solid #334155;
+
 }
+
 
 .table th{
+
     color:#94a3b8;
+
     font-size:13px;
+
 }
+
 
 .success{
+
     color:#86efac;
+
 }
+
 
 .warning{
+
     color:#fde68a;
+
 }
 
+
 .empty{
+
     text-align:center;
+
     padding:30px;
+
     color:#64748b;
+
 }
+
+
+/* =========================================
+   CHANGE BUTTON
+========================================= */
+
+.change-attendance-btn{
+
+    padding:8px 12px;
+
+    border:0;
+
+    border-radius:7px;
+
+    background:#475569;
+
+    color:white;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+}
+
+
+.change-attendance-btn:hover{
+
+    background:#334155;
+
+}
+
 
 @media(max-width:1000px){
 
     .cards{
-        grid-template-columns:repeat(2,1fr);
+
+        grid-template-columns:
+            repeat(2,1fr);
+
     }
 
 }
 
+
 @media(max-width:700px){
 
     .sidebar{
+
         position:static;
+
         width:100%;
+
         height:auto;
+
     }
+
 
     .main{
+
         margin-left:0;
+
     }
 
+
     .cards{
+
         grid-template-columns:1fr;
+
     }
 
 }
@@ -201,11 +334,17 @@ body{
 
 <body>
 
+
+<!-- =========================================
+     SIDEBAR
+========================================= -->
+
 <div class="sidebar">
 
     <div class="logo">
         Face<span>Attend</span>
     </div>
+
 
     <div class="nav">
 
@@ -213,25 +352,34 @@ body{
             🏠 Dashboard
         </a>
 
+
         <a href="students.html">
             👨‍🎓 Students
         </a>
+
 
         <a href="calendar.html">
             📅 Calendar
         </a>
 
+
         <a href="take-attendance.html">
             📷 Take Attendance
         </a>
 
-        <a href="attendance.html"
-           class="active">
+
+        <a
+            href="attendance.html"
+            class="active"
+        >
             📊 Reports
         </a>
 
-        <a class="logout"
-           onclick="logout()">
+
+        <a
+            class="logout"
+            onclick="logout()"
+        >
             ↪ Logout
         </a>
 
@@ -240,7 +388,12 @@ body{
 </div>
 
 
+<!-- =========================================
+     MAIN
+========================================= -->
+
 <div class="main">
+
 
     <div class="header">
 
@@ -257,7 +410,13 @@ body{
 
     <div class="panel">
 
+
+        <!-- =====================================
+             FILTERS
+        ====================================== -->
+
         <div class="filters">
+
 
             <input
                 type="date"
@@ -272,23 +431,35 @@ body{
                 </option>
 
                 <option>
-                    Data Structures
+                    DE
                 </option>
 
                 <option>
-                    DBMS
+                    SEDP
+                </option>
+                <option>
+                    SEDP_LAB
                 </option>
 
                 <option>
-                    Operating Systems
+                    APTITUDE
                 </option>
 
                 <option>
-                    Computer Networks
+                    SOFT_SKILL
                 </option>
 
                 <option>
-                    Java
+                    PS_LAB
+                </option>
+                <option>
+                    DL
+                </option>
+                <option>
+                    ADB
+                </option>
+                <option>
+                    TOC
                 </option>
 
             </select>
@@ -318,37 +489,80 @@ body{
                 Filter
             </button>
 
+
         </div>
 
+
+        <!-- =====================================
+             CARDS
+        ====================================== -->
 
         <div class="cards">
 
-            <div class="card">
-                <p>Total Records</p>
-                <h2 id="total">0</h2>
-            </div>
 
             <div class="card">
-                <p>Present</p>
-                <h2 id="present">0</h2>
+
+                <p>
+                    Total Records
+                </p>
+
+                <h2 id="total">
+                    0
+                </h2>
+
             </div>
 
-            <div class="card">
-                <p>Absent</p>
-                <h2 id="absent">0</h2>
-            </div>
 
             <div class="card">
-                <p>Attendance %</p>
-                <h2 id="percentage">0%</h2>
+
+                <p>
+                    Present
+                </p>
+
+                <h2 id="present">
+                    0
+                </h2>
+
             </div>
+
+
+            <div class="card">
+
+                <p>
+                    Absent
+                </p>
+
+                <h2 id="absent">
+                    0
+                </h2>
+
+            </div>
+
+
+            <div class="card">
+
+                <p>
+                    Attendance %
+                </p>
+
+                <h2 id="percentage">
+                    0%
+                </h2>
+
+            </div>
+
 
         </div>
 
+
+        <!-- =====================================
+             TABLE
+        ====================================== -->
 
         <div class="table-wrap">
 
             <table class="table">
+
 
                 <thead>
 
@@ -378,17 +592,24 @@ body{
                             Status
                         </th>
 
+                        <th>
+                            Action
+                        </th>
+
                     </tr>
 
                 </thead>
+
 
                 <tbody id="rows">
 
                 </tbody>
 
+
             </table>
 
         </div>
+
 
     </div>
 
@@ -397,13 +618,29 @@ body{
 
 <script>
 
+
+// ==========================================
+// API
+// ==========================================
+
 const API =
     "http://localhost:5000/api";
 
 
+// ==========================================
+// AUTH CHECK
+// ==========================================
+
 if(
-    !localStorage.getItem("token") ||
-    localStorage.getItem("role") !== "admin"
+
+    !localStorage.getItem(
+        "token"
+    ) ||
+
+    localStorage.getItem(
+        "role"
+    ) !== "admin"
+
 ){
 
     location.href =
@@ -411,6 +648,10 @@ if(
 
 }
 
+
+// ==========================================
+// LOGOUT
+// ==========================================
 
 function logout(){
 
@@ -421,6 +662,10 @@ function logout(){
 
 }
 
+
+// ==========================================
+// HEADERS
+// ==========================================
 
 function headers(){
 
@@ -436,6 +681,10 @@ function headers(){
 
 }
 
+
+// ==========================================
+// LOAD ATTENDANCE
+// ==========================================
 
 async function loadAttendance(){
 
@@ -463,36 +712,50 @@ async function loadAttendance(){
             ).value;
 
 
-        if(date)
+        if(date){
+
             params.set(
                 "date",
                 date
             );
 
+        }
 
-        if(subject)
+
+        if(subject){
+
             params.set(
                 "subject",
                 subject
             );
 
+        }
 
-        if(status)
+
+        if(status){
+
             params.set(
                 "status",
                 status
             );
 
+        }
+
 
         const response =
             await fetch(
+
                 API +
                 "/attendance?" +
                 params.toString(),
+
                 {
+
                     headers:
                         headers()
+
                 }
+
             );
 
 
@@ -513,51 +776,80 @@ async function loadAttendance(){
             data.attendance;
 
 
+        // =====================================
+        // CALCULATE TOTALS
+        // =====================================
+
         const present =
             records.filter(
+
                 record =>
                     record.status ===
                     "Present"
+
             ).length;
 
 
         const absent =
             records.filter(
+
                 record =>
                     record.status ===
                     "Absent"
+
             ).length;
 
 
         document
-            .getElementById("total")
+            .getElementById(
+                "total"
+            )
             .textContent =
-            records.length;
+                records.length;
 
 
         document
-            .getElementById("present")
+            .getElementById(
+                "present"
+            )
             .textContent =
-            present;
+                present;
 
 
         document
-            .getElementById("absent")
+            .getElementById(
+                "absent"
+            )
             .textContent =
-            absent;
+                absent;
 
 
         document
-            .getElementById("percentage")
+            .getElementById(
+                "percentage"
+            )
             .textContent =
-            records.length
-            ? Math.round(
-                present /
-                records.length *
-                100
-            ) + "%"
-            : "0%";
 
+                records.length
+
+                ?
+
+                Math.round(
+
+                    present /
+                    records.length *
+                    100
+
+                ) + "%"
+
+                :
+
+                "0%";
+
+
+        // =====================================
+        // TABLE
+        // =====================================
 
         const rows =
             document.getElementById(
@@ -565,15 +857,25 @@ async function loadAttendance(){
             );
 
 
-        if(records.length === 0){
+        if(
+            records.length === 0
+        ){
 
             rows.innerHTML = `
+
                 <tr>
-                    <td colspan="6"
-                        class="empty">
+
+                    <td
+                        colspan="7"
+                        class="empty"
+                    >
+
                         No attendance records found.
+
                     </td>
+
                 </tr>
+
             `;
 
             return;
@@ -582,60 +884,251 @@ async function loadAttendance(){
 
 
         rows.innerHTML =
-            records.map(
-                record => `
+            records
+                .map(
 
-                <tr>
+                    record => `
 
-                    <td>
-                        ${record.studentId}
-                    </td>
+                    <tr>
 
-                    <td>
-                        ${record.studentName}
-                    </td>
+                        <td>
+                            ${record.studentId}
+                        </td>
 
-                    <td>
-                        ${record.subject}
-                    </td>
 
-                    <td>
-                        ${record.date}
-                    </td>
+                        <td>
+                            ${record.studentName}
+                        </td>
 
-                    <td>
-                        ${record.time}
-                    </td>
 
-                    <td class="${
-                        record.status ===
-                        "Present"
-                        ? "success"
-                        : "warning"
-                    }">
+                        <td>
+                            ${record.subject}
+                        </td>
 
-                        ${record.status}
 
-                    </td>
+                        <td>
+                            ${record.date}
+                        </td>
 
-                </tr>
+
+                        <td>
+                            ${record.time}
+                        </td>
+
+
+                        <td
+                            class="${
+                                record.status ===
+                                "Present"
+
+                                ? "success"
+
+                                : "warning"
+                            }"
+                        >
+
+                            ${record.status}
+
+                        </td>
+
+
+                        <td>
+
+                            <button
+                                class="change-attendance-btn"
+                                onclick="changeAttendance(
+                                    '${record._id}',
+                                    '${record.studentName}',
+                                    '${record.status}'
+                                )"
+                            >
+
+                                Change
+
+                            </button>
+
+                        </td>
+
+                    </tr>
 
                 `
-            ).join("");
+
+                )
+                .join("");
 
     }
     catch(error){
 
-        alert(error.message);
+        alert(
+            error.message
+        );
 
     }
 
 }
 
 
+// ==========================================
+// CHANGE ATTENDANCE
+// ==========================================
+
+async function changeAttendance(
+
+    attendanceId,
+
+    studentName,
+
+    currentStatus
+
+){
+
+    // --------------------------------------
+    // DETERMINE NEW STATUS
+    // --------------------------------------
+
+    const newStatus =
+
+        currentStatus === "Present"
+
+        ?
+
+        "Absent"
+
+        :
+
+        "Present";
+
+
+    // --------------------------------------
+    // CONFIRM
+    // --------------------------------------
+
+    const confirmChange =
+        confirm(
+
+            "Change attendance for " +
+            studentName +
+
+            " from " +
+            currentStatus +
+
+            " to " +
+            newStatus +
+
+            "?"
+
+        );
+
+
+    if(!confirmChange){
+
+        return;
+
+    }
+
+
+    try{
+
+        // ----------------------------------
+        // UPDATE
+        // ----------------------------------
+
+        const response =
+            await fetch(
+
+                API +
+                "/attendance/" +
+                attendanceId,
+
+                {
+
+                    method:
+                        "PATCH",
+
+                    headers:{
+
+                        Authorization:
+                            "Bearer " +
+                            localStorage.getItem(
+                                "token"
+                            ),
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            status:
+                                newStatus
+
+                        })
+
+                }
+
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            throw new Error(
+
+                data.message ||
+                "Failed to update attendance"
+
+            );
+
+        }
+
+
+        // ----------------------------------
+        // SUCCESS
+        // ----------------------------------
+
+        alert(
+
+            data.message ||
+            "Attendance updated successfully"
+
+        );
+
+
+        // Reload table
+
+        loadAttendance();
+
+    }
+    catch(error){
+
+        console.error(error);
+
+
+        alert(
+
+            "Attendance update failed: " +
+            error.message
+
+        );
+
+    }
+
+}
+
+
+// ==========================================
+// INITIAL LOAD
+// ==========================================
+
 loadAttendance();
 
 </script>
+
 
 </body>
 
