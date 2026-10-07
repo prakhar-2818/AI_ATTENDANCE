@@ -41,7 +41,7 @@ const attendanceSchema = new mongoose.Schema(
 
         verification: {
             type: String,
-            enum: ["face", "manual"],
+            enum: ["face", "manual", "system"],
             default: "face"
         },
 
@@ -55,23 +55,41 @@ const attendanceSchema = new mongoose.Schema(
             default: null
         }
     },
+
     {
         timestamps: true
     }
 );
 
+
+// ==========================================
+// IMPORTANT
+// ==========================================
+// Same student can have:
+//
+// DE 03:00 - 03:30
+// DE 03:30 - 04:00
+//
+// on the same date.
+//
+// Therefore time is included in unique index.
+// ==========================================
+
 attendanceSchema.index(
     {
         studentId: 1,
         subject: 1,
-        date: 1
+        date: 1,
+        time: 1
     },
     {
         unique: true
     }
 );
 
-module.exports = mongoose.model(
-    "Attendance",
-    attendanceSchema
-);
+
+module.exports =
+    mongoose.model(
+        "Attendance",
+        attendanceSchema
+    );

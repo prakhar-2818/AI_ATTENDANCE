@@ -38,10 +38,12 @@ const upload = multer({
         function (req, file, cb) {
 
             const allowedTypes = [
+
                 "image/jpeg",
                 "image/png",
                 "image/jpg",
                 "image/webp"
+
             ];
 
 
@@ -77,17 +79,16 @@ const upload = multer({
 
 router.post(
     "/recognize",
+
     auth,
+
     adminOnly,
+
     upload.single("image"),
 
     async (req, res) => {
 
         try {
-
-            // ----------------------------------
-            // CHECK IMAGE
-            // ----------------------------------
 
             if (!req.file) {
 
@@ -103,17 +104,16 @@ router.post(
             }
 
 
-            // ----------------------------------
-            // CREATE FORM DATA
-            // ----------------------------------
-
             const form =
                 new FormData();
 
 
             form.append(
+
                 "image",
+
                 req.file.buffer,
+
                 {
 
                     filename:
@@ -123,12 +123,9 @@ router.post(
                         req.file.mimetype
 
                 }
+
             );
 
-
-            // ----------------------------------
-            // SEND IMAGE TO PYTHON AI
-            // ----------------------------------
 
             const aiResponse =
                 await axios.post(
@@ -160,10 +157,6 @@ router.post(
                 aiResponse.data;
 
 
-            // ----------------------------------
-            // AI FAILED
-            // ----------------------------------
-
             if (!aiData.success) {
 
                 return res.json({
@@ -178,19 +171,18 @@ router.post(
             }
 
 
-            // ----------------------------------
-            // GET LIVE EMBEDDING
-            // ----------------------------------
-
             const liveEmbedding =
                 aiData.embedding;
 
 
             if (
+
                 !liveEmbedding ||
+
                 !Array.isArray(
                     liveEmbedding
                 )
+
             ) {
 
                 return res.status(500).json({
@@ -205,9 +197,9 @@ router.post(
             }
 
 
-            // ----------------------------------
+            // ==================================
             // GET REGISTERED STUDENTS
-            // ----------------------------------
+            // ==================================
 
             const students =
                 await User.find({
@@ -224,7 +216,9 @@ router.post(
                     }
 
                 }).select(
+
                     "userId name faceEmbedding"
+
                 );
 
 
@@ -261,9 +255,13 @@ router.post(
 
 
                 for (
+
                     let i = 0;
+
                     i < a.length;
+
                     i++
+
                 ) {
 
                     dot +=
@@ -279,8 +277,11 @@ router.post(
 
 
                 if (
+
                     magnitudeA === 0 ||
+
                     magnitudeB === 0
+
                 ) {
 
                     return 0;
@@ -289,13 +290,17 @@ router.post(
 
 
                 return dot /
+
                     (
+
                         Math.sqrt(
                             magnitudeA
                         ) *
+
                         Math.sqrt(
                             magnitudeB
                         )
+
                     );
 
             }
@@ -317,9 +322,12 @@ router.post(
             ) {
 
                 if (
+
                     !student.faceEmbedding ||
+
                     student.faceEmbedding.length !==
                         liveEmbedding.length
+
                 ) {
 
                     continue;
@@ -361,9 +369,12 @@ router.post(
 
 
             if (
+
                 !bestStudent ||
+
                 bestScore <
                     MATCH_THRESHOLD
+
             ) {
 
                 return res.json({
@@ -382,7 +393,7 @@ router.post(
 
 
             // ==================================
-            // FACE RECOGNIZED
+            // SUCCESS
             // ==================================
 
             return res.json({
@@ -407,7 +418,9 @@ router.post(
 
             });
 
+
         }
+
         catch (error) {
 
             console.log(
@@ -415,8 +428,11 @@ router.post(
             );
 
             console.log(
+
                 error.response?.data ||
+
                 error.message
+
             );
 
 
@@ -425,7 +441,9 @@ router.post(
                 success: false,
 
                 message:
+
                     error.response?.data?.message ||
+
                     error.message
 
             });
@@ -433,6 +451,7 @@ router.post(
         }
 
     }
+
 );
 
 
@@ -442,7 +461,9 @@ router.post(
 
 router.post(
     "/mark",
+
     auth,
+
     adminOnly,
 
     async (req, res) => {
@@ -450,20 +471,28 @@ router.post(
         try {
 
             const {
+
                 studentId,
+
                 subject,
+
                 livenessPassed,
+
                 confidence
+
             } = req.body;
 
 
             // ==================================
-            // BASIC VALIDATION
+            // VALIDATION
             // ==================================
 
             if (
+
                 !studentId ||
+
                 !subject
+
             ) {
 
                 return res.status(400).json({
@@ -479,7 +508,7 @@ router.post(
 
 
             // ==================================
-            // LIVENESS CHECK
+            // LIVENESS
             // ==================================
 
             if (!livenessPassed) {
@@ -554,15 +583,20 @@ router.post(
 
 
             const date =
+
                 now.getFullYear() +
+
                 "-" +
+
                 String(
                     now.getMonth() + 1
                 ).padStart(
                     2,
                     "0"
                 ) +
+
                 "-" +
+
                 String(
                     now.getDate()
                 ).padStart(
@@ -572,13 +606,16 @@ router.post(
 
 
             const time =
+
                 String(
                     now.getHours()
                 ).padStart(
                     2,
                     "0"
                 ) +
+
                 ":" +
+
                 String(
                     now.getMinutes()
                 ).padStart(
@@ -588,7 +625,7 @@ router.post(
 
 
             // ==================================
-            // CHECK ACTIVE SUBJECT
+            // FIND CURRENT ACTIVE SLOT
             // ==================================
 
             const activeSlot =
@@ -626,7 +663,7 @@ router.post(
 
 
             // ==================================
-            // CHECK EXISTING ATTENDANCE
+            // CHECK ATTENDANCE FOR THIS SLOT
             // ==================================
 
             const existing =
@@ -636,21 +673,31 @@ router.post(
 
                     subject,
 
-                    date
+                    date,
+
+                    time: {
+
+                        $gte:
+                            activeSlot.startTime,
+
+                        $lt:
+                            activeSlot.endTime
+
+                    }
 
                 });
 
 
             // ==================================
-            // EXISTING RECORD FOUND
+            // EXISTING ATTENDANCE
             // ==================================
 
             if (existing) {
 
 
-                // ==================================
+                // ----------------------------------
                 // ALREADY PRESENT
-                // ==================================
+                // ----------------------------------
 
                 if (
                     existing.status ===
@@ -661,7 +708,8 @@ router.post(
 
                         success: true,
 
-                        alreadyMarked: true,
+                        alreadyMarked:
+                            true,
 
                         changedFromAbsent:
                             false,
@@ -677,14 +725,9 @@ router.post(
                 }
 
 
-                // ==================================
-                // PREVIOUSLY ABSENT
-                //
-                // FACULTY MANUALLY CHANGED
-                // PRESENT -> ABSENT
-                //
-                // NOW FACE ATTENDANCE AGAIN
-                // ==================================
+                // ----------------------------------
+                // ABSENT -> PRESENT
+                // ----------------------------------
 
                 if (
                     existing.status ===
@@ -694,9 +737,6 @@ router.post(
                     existing.status =
                         "Present";
 
-
-                    // This attendance is now
-                    // verified through face
 
                     existing.verification =
                         "face";
@@ -721,7 +761,8 @@ router.post(
 
                         success: true,
 
-                        alreadyMarked: false,
+                        alreadyMarked:
+                            false,
 
                         changedFromAbsent:
                             true,
@@ -740,8 +781,7 @@ router.post(
 
 
             // ==================================
-            // NO EXISTING RECORD
-            // CREATE NEW ATTENDANCE
+            // CREATE PRESENT ATTENDANCE
             // ==================================
 
             const attendance =
@@ -756,7 +796,8 @@ router.post(
                     studentName:
                         student.name,
 
-                    subject,
+                    subject:
+                        activeSlot.subject,
 
                     date,
 
@@ -777,15 +818,12 @@ router.post(
                 });
 
 
-            // ==================================
-            // RESPONSE
-            // ==================================
-
             return res.status(201).json({
 
                 success: true,
 
-                alreadyMarked: false,
+                alreadyMarked:
+                    false,
 
                 changedFromAbsent:
                     false,
@@ -797,7 +835,9 @@ router.post(
 
             });
 
+
         }
+
         catch (error) {
 
             console.log(
@@ -821,16 +861,19 @@ router.post(
         }
 
     }
+
 );
 
 
 // ==========================================
-// MANUALLY CHANGE ATTENDANCE
+// MANUAL ATTENDANCE CHANGE
 // ==========================================
 
 router.patch(
     "/:id",
+
     auth,
+
     adminOnly,
 
     async (req, res) => {
@@ -842,13 +885,12 @@ router.patch(
             } = req.body;
 
 
-            // ==================================
-            // VALIDATE STATUS
-            // ==================================
-
             if (
+
                 status !== "Present" &&
+
                 status !== "Absent"
+
             ) {
 
                 return res.status(400).json({
@@ -862,10 +904,6 @@ router.patch(
 
             }
 
-
-            // ==================================
-            // FIND ATTENDANCE
-            // ==================================
 
             const attendance =
                 await Attendance.findById(
@@ -887,17 +925,9 @@ router.patch(
             }
 
 
-            // ==================================
-            // UPDATE STATUS
-            // ==================================
-
             attendance.status =
                 status;
 
-
-            // ==================================
-            // MARK AS MANUAL
-            // ==================================
 
             attendance.verification =
                 "manual";
@@ -910,10 +940,6 @@ router.patch(
             await attendance.save();
 
 
-            // ==================================
-            // RESPONSE
-            // ==================================
-
             return res.json({
 
                 success: true,
@@ -925,14 +951,13 @@ router.patch(
 
             });
 
+
         }
+
         catch (error) {
 
             console.log(
-                "MANUAL ATTENDANCE UPDATE ERROR:"
-            );
-
-            console.log(
+                "MANUAL ATTENDANCE UPDATE ERROR:",
                 error.message
             );
 
@@ -949,6 +974,7 @@ router.patch(
         }
 
     }
+
 );
 
 
@@ -958,6 +984,7 @@ router.patch(
 
 router.get(
     "/",
+
     auth,
 
     async (req, res) => {
@@ -967,10 +994,6 @@ router.get(
             const filter = {};
 
 
-            // ----------------------------------
-            // DATE FILTER
-            // ----------------------------------
-
             if (req.query.date) {
 
                 filter.date =
@@ -978,10 +1001,6 @@ router.get(
 
             }
 
-
-            // ----------------------------------
-            // SUBJECT FILTER
-            // ----------------------------------
 
             if (req.query.subject) {
 
@@ -991,10 +1010,6 @@ router.get(
             }
 
 
-            // ----------------------------------
-            // STATUS FILTER
-            // ----------------------------------
-
             if (req.query.status) {
 
                 filter.status =
@@ -1002,10 +1017,6 @@ router.get(
 
             }
 
-
-            // ----------------------------------
-            // GET RECORDS
-            // ----------------------------------
 
             const attendance =
                 await Attendance.find(
@@ -1029,7 +1040,9 @@ router.get(
 
             });
 
+
         }
+
         catch (error) {
 
             return res.status(500).json({
@@ -1044,7 +1057,293 @@ router.get(
         }
 
     }
+
 );
+
+
+// ==========================================
+// AUTO MARK ABSENT
+// ==========================================
+
+async function autoMarkAbsent() {
+
+    try {
+
+        const now =
+            new Date();
+
+
+        const days = [
+
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday"
+
+        ];
+
+
+        const day =
+            days[
+                now.getDay()
+            ];
+
+
+        const date =
+
+            now.getFullYear() +
+
+            "-" +
+
+            String(
+                now.getMonth() + 1
+            ).padStart(
+                2,
+                "0"
+            ) +
+
+            "-" +
+
+            String(
+                now.getDate()
+            ).padStart(
+                2,
+                "0"
+            );
+
+
+        const currentTime =
+
+            String(
+                now.getHours()
+            ).padStart(
+                2,
+                "0"
+            ) +
+
+            ":" +
+
+            String(
+                now.getMinutes()
+            ).padStart(
+                2,
+                "0"
+            );
+
+
+        // ==================================
+        // GET FINISHED SLOTS
+        // ==================================
+
+        const finishedSlots =
+            await CalendarSlot.find({
+
+                day,
+
+                endTime: {
+
+                    $lte:
+                        currentTime
+
+                }
+
+            });
+
+
+        if (
+            finishedSlots.length === 0
+        ) {
+
+            return;
+
+        }
+
+
+        // ==================================
+        // GET ALL STUDENTS
+        // ==================================
+
+        const students =
+            await User.find({
+
+                role:
+                    "student"
+
+            });
+
+
+        // ==================================
+        // CHECK EVERY SLOT
+        // ==================================
+
+        for (
+            const slot of finishedSlots
+        ) {
+
+            for (
+                const student of students
+            ) {
+
+
+                // ----------------------------------
+                // CHECK THIS EXACT SLOT
+                // ----------------------------------
+
+                const existing =
+                    await Attendance.findOne({
+
+                        studentId:
+                            student.userId,
+
+                        subject:
+                            slot.subject,
+
+                        date:
+
+                            date,
+
+                        time: {
+
+                            $gte:
+                                slot.startTime,
+
+                            $lt:
+                                slot.endTime
+
+                        }
+
+                    });
+
+
+                // ----------------------------------
+                // ALREADY PRESENT / ABSENT
+                // ----------------------------------
+
+                if (existing) {
+
+                    continue;
+
+                }
+
+
+                // ----------------------------------
+                // NO ATTENDANCE
+                // CREATE ABSENT
+                // ----------------------------------
+
+                try {
+
+                    await Attendance.create({
+
+                        student:
+                            student._id,
+
+                        studentId:
+                            student.userId,
+
+                        studentName:
+                            student.name,
+
+                        subject:
+                            slot.subject,
+
+                        date:
+                            date,
+
+                        time:
+                            slot.startTime,
+
+                        status:
+                            "Absent",
+
+                        verification:
+                            "system",
+
+                        livenessPassed:
+                            false,
+
+                        confidence:
+                            null
+
+                    });
+
+
+                    console.log(
+
+                        "AUTO ABSENT:",
+
+                        student.name,
+
+                        "|",
+
+                        slot.subject,
+
+                        "|",
+
+                        date,
+
+                        "|",
+
+                        slot.startTime
+
+                    );
+
+                }
+
+                catch (error) {
+
+                    if (
+                        error.code !== 11000
+                    ) {
+
+                        console.log(
+
+                            "AUTO ABSENT CREATE ERROR:",
+
+                            error.message
+
+                        );
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.log(
+            "AUTO ABSENT ERROR:",
+            error.message
+        );
+
+    }
+
+}
+
+
+// ==========================================
+// CHECK EVERY 1 MINUTE
+// ==========================================
+
+setInterval(
+    autoMarkAbsent,
+    60 * 1000
+);
+
+
+// ==========================================
+// CHECK ON SERVER START
+// ==========================================
+
+autoMarkAbsent();
 
 
 // ==========================================
@@ -1053,22 +1352,26 @@ router.get(
 
 router.get(
     "/student/:studentId",
+
     auth,
 
     async (req, res) => {
 
         try {
 
+
             // ----------------------------------
-            // STUDENT CAN ONLY SEE OWN ATTENDANCE
+            // SECURITY
             // ----------------------------------
 
             if (
+
                 req.user.role ===
                     "student" &&
 
                 req.user.userId !==
                     req.params.studentId
+
             ) {
 
                 return res.status(403).json({
@@ -1084,7 +1387,14 @@ router.get(
 
 
             // ----------------------------------
-            // FIND RECORDS
+            // RUN AUTO ABSENT
+            // ----------------------------------
+
+            await autoMarkAbsent();
+
+
+            // ----------------------------------
+            // GET RECORDS
             // ----------------------------------
 
             const records =
@@ -1114,7 +1424,17 @@ router.get(
             });
 
         }
+
         catch (error) {
+
+            console.log(
+
+                "GET STUDENT ATTENDANCE ERROR:",
+
+                error.message
+
+            );
+
 
             return res.status(500).json({
 
@@ -1128,7 +1448,9 @@ router.get(
         }
 
     }
+
 );
 
 
-module.exports = router;
+module.exports =
+    router;
