@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Calendar | FaceAttend</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#0f172a;
+    color:white;
+}
+
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    width:240px;
+    height:100vh;
+    background:#111827;
+    border-right:1px solid #334155;
+    padding:25px 15px;
+}
+
+.logo{
+    font-size:24px;
+    font-weight:bold;
+    padding:10px 15px 30px;
+}
+
+.logo span{
+    color:#3b82f6;
+}
+
+.nav a{
+    display:block;
+    padding:13px 15px;
+    margin-bottom:7px;
+    color:#94a3b8;
+    text-decoration:none;
+    border-radius:8px;
+}
+
+.nav a:hover,
+.nav a.active{
+    background:#2563eb;
+    color:white;
+}
+
+.logout{
+    color:#fca5a5!important;
+    cursor:pointer;
+}
+
+.main{
+    margin-left:240px;
+    padding:30px;
+}
+
+.header{
+    margin-bottom:25px;
+}
+
+.header p{
+    color:#94a3b8;
+    margin-top:7px;
+}
+
+.panel{
+    background:#1e293b;
+    border:1px solid #334155;
+    border-radius:15px;
+    padding:25px;
+    margin-bottom:20px;
+}
+
+.form{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr 1fr auto;
+    gap:12px;
+    align-items:end;
+}
+
+.field label{
+    display:block;
+    color:#94a3b8;
+    font-size:13px;
+    margin-bottom:7px;
+}
+
+.field select,
+.field input{
+    width:100%;
+    padding:12px;
+    background:#0f172a;
+    border:1px solid #475569;
+    border-radius:8px;
+    color:white;
+    outline:none;
+}
+
+.btn{
+    padding:12px 18px;
+    border:0;
+    border-radius:8px;
+    background:#2563eb;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.btn:hover{
+    background:#1d4ed8;
+}
+
+.danger{
+    background:#7f1d1d;
+}
+
+.days{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:10px;
+    margin-bottom:20px;
+}
+
+.day{
+    padding:15px 8px;
+    background:#0f172a;
+    border:1px solid #334155;
+    border-radius:9px;
+    text-align:center;
+    cursor:pointer;
+}
+
+.day:hover,
+.day.active{
+    background:#2563eb;
+    border-color:#2563eb;
+}
+
+.slot{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:#0f172a;
+    border:1px solid #334155;
+    padding:17px;
+    border-radius:10px;
+    margin-top:10px;
+}
+
+.slot-left{
+    display:flex;
+    align-items:center;
+    gap:18px;
+}
+
+.time{
+    color:#60a5fa;
+    min-width:150px;
+}
+
+.subject{
+    font-weight:bold;
+}
+
+.empty{
+    text-align:center;
+    color:#64748b;
+    padding:30px;
+}
+
+@media(max-width:1000px){
+
+    .form{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .days{
+        grid-template-columns:repeat(4,1fr);
+    }
+
+}
+
+@media(max-width:700px){
+
+    .sidebar{
+        position:static;
+        width:100%;
+        height:auto;
+    }
+
+    .main{
+        margin-left:0;
+    }
+
+    .form{
+        grid-template-columns:1fr;
+    }
+
+    .days{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .slot-left{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:5px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="sidebar">
+
+    <div class="logo">
+        Face<span>Attend</span>
+    </div>
+
+    <div class="nav">
+
+        <a href="dashboard.html">
+            🏠 Dashboard
+        </a>
+
+        <a href="students.html">
+            👨‍🎓 Students
+        </a>
+
+        <a href="calendar.html" class="active">
+            📅 Calendar
+        </a>
+
+        <a href="take-attendance.html">
+            📷 Take Attendance
+        </a>
+
+        <a href="attendance.html">
+            📊 Reports
+        </a>
+
+        <a class="logout" onclick="logout()">
+            ↪ Logout
+        </a>
+
+    </div>
+
+</div>
+
+
+<div class="main">
+
+    <div class="header">
+
+        <h1>
+            Attendance Calendar
+        </h1>
+
+        <p>
+            Create multiple subject slots for each day
+        </p>
+
+    </div>
+
+
+    <div class="panel">
+
+        <h2>
+            Add Subject Slot
+        </h2>
+
+        <br>
+
+        <div class="form">
+
+            <div class="field">
+
+                <label>Day</label>
+
+                <select id="day">
+
+                    <option>Monday</option>
+                    <option>Tuesday</option>
+                    <option>Wednesday</option>
+                    <option>Thursday</option>
+                    <option>Friday</option>
+                    <option>Saturday</option>
+                    <option>Sunday</option>
+
+                </select>
+
+            </div>
+
+
+            <div class="field">
+
+                <label>Subject</label>
+
+                <select id="subject">
+
+                    <option>
+                        Data Structures
+                    </option>
+
+                    <option>
+                        DBMS
+                    </option>
+
+                    <option>
+                        Operating Systems
+                    </option>
+
+                    <option>
+                        Computer Networks
+                    </option>
+
+                    <option>
+                        Java
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="field">
+
+                <label>Start Time</label>
+
+                <input
+                    type="time"
+                    id="startTime"
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>End Time</label>
+
+                <input
+                    type="time"
+                    id="endTime"
+                >
+
+            </div>
+
+
+            <button
+                class="btn"
+                onclick="addSlot()"
+            >
+                + Add Slot
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="panel">
+
+        <div
+            class="days"
+            id="days"
+        ></div>
+
+
+        <h2 id="scheduleTitle">
+            Monday Schedule
+        </h2>
+
+
+        <div id="slotList"></div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const API =
+    "http://localhost:5000/api";
+
+
+if(
+    !localStorage.getItem("token") ||
+    localStorage.getItem("role") !== "admin"
+){
+
+    location.href =
+        "login.html";
+
+}
+
+
+function headers(json=false){
+
+    const h = {
+        Authorization:
+            "Bearer " +
+            localStorage.getItem("token")
+    };
+
+    if(json){
+
+        h["Content-Type"] =
+            "application/json";
+
+    }
+
+    return h;
+
+}
+
+
+function logout(){
+
+    localStorage.clear();
+
+    location.href =
+        "login.html";
+
+}
+
+
+let selectedDay =
+    "Monday";
+
+let schedules = [];
+
+
+const days = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday"
+];
+
+
+async function loadCalendar(){
+
+    try{
+
+        const response =
+            await fetch(
+                API + "/calendar",
+                {
+                    headers:
+                        headers()
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.message
+            );
+
+        }
+
+
+        schedules =
+            data.slots;
+
+
+        renderDays();
+
+        renderSchedule();
+
+    }
+    catch(error){
+
+        alert(error.message);
+
+    }
+
+}
+
+
+function renderDays(){
+
+    const container =
+        document.getElementById(
+            "days"
+        );
+
+
+    container.innerHTML =
+        days.map(
+            day => {
+
+                const count =
+                    schedules.filter(
+                        slot =>
+                            slot.day === day
+                    ).length;
+
+
+                return `
+
+                    <div
+                        class="day ${
+                            selectedDay === day
+                            ? "active"
+                            : ""
+                        }"
+                        onclick="
+                            selectDay('${day}')
+                        "
+                    >
+
+                        ${day}
+
+                        <br>
+
+                        <small>
+                            ${count} slots
+                        </small>
+
+                    </div>
+
+                `;
+
+            }
+        ).join("");
+
+}
+
+
+function selectDay(day){
+
+    selectedDay =
+        day;
+
+    document
+        .getElementById("day")
+        .value =
+        day;
+
+    renderDays();
+
+    renderSchedule();
+
+}
+
+
+function renderSchedule(){
+
+    const list =
+        document.getElementById(
+            "slotList"
+        );
+
+
+    document
+        .getElementById(
+            "scheduleTitle"
+        )
+        .textContent =
+        selectedDay +
+        " Schedule";
+
+
+    const slots =
+        schedules
+            .filter(
+                slot =>
+                    slot.day ===
+                    selectedDay
+            )
+            .sort(
+                (a,b) =>
+                    a.startTime
+                        .localeCompare(
+                            b.startTime
+                        )
+            );
+
+
+    if(slots.length === 0){
+
+        list.innerHTML = `
+            <div class="empty">
+                No slots added for
+                ${selectedDay}.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    list.innerHTML =
+        slots.map(
+            slot => `
+
+                <div class="slot">
+
+                    <div class="slot-left">
+
+                        <div class="time">
+
+                            ${formatTime(
+                                slot.startTime
+                            )}
+
+                            -
+
+                            ${formatTime(
+                                slot.endTime
+                            )}
+
+                        </div>
+
+                        <div class="subject">
+
+                            ${slot.subject}
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        class="btn danger"
+                        onclick="
+                            deleteSlot(
+                                '${slot._id}'
+                            )
+                        "
+                    >
+                        Delete
+                    </button>
+
+                </div>
+
+            `
+        ).join("");
+
+}
+
+
+async function addSlot(){
+
+    const day =
+        document.getElementById(
+            "day"
+        ).value;
+
+
+    const subject =
+        document.getElementById(
+            "subject"
+        ).value;
+
+
+    const startTime =
+        document.getElementById(
+            "startTime"
+        ).value;
+
+
+    const endTime =
+        document.getElementById(
+            "endTime"
+        ).value;
+
+
+    if(!startTime || !endTime){
+
+        alert(
+            "Please select start and end time."
+        );
+
+        return;
+    }
+
+
+    if(startTime >= endTime){
+
+        alert(
+            "End time must be after start time."
+        );
+
+        return;
+    }
+
+
+    try{
+
+        const response =
+            await fetch(
+                API + "/calendar",
+                {
+
+                    method:"POST",
+
+                    headers:
+                        headers(true),
+
+                    body:
+                        JSON.stringify({
+
+                            day,
+                            subject,
+                            startTime,
+                            endTime
+
+                        })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.message
+            );
+
+        }
+
+
+        selectedDay =
+            day;
+
+
+        document
+            .getElementById(
+                "startTime"
+            )
+            .value = "";
+
+
+        document
+            .getElementById(
+                "endTime"
+            )
+            .value = "";
+
+
+        loadCalendar();
+
+    }
+    catch(error){
+
+        alert(error.message);
+
+    }
+
+}
+
+
+async function deleteSlot(id){
+
+    if(
+        !confirm(
+            "Delete this slot?"
+        )
+    )
+        return;
+
+
+    try{
+
+        const response =
+            await fetch(
+                API +
+                "/calendar/" +
+                id,
+                {
+                    method:"DELETE",
+                    headers:
+                        headers()
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.message
+            );
+
+        }
+
+
+        loadCalendar();
+
+    }
+    catch(error){
+
+        alert(error.message);
+
+    }
+
+}
+
+
+function formatTime(time){
+
+    let [h,m] =
+        time.split(":");
+
+    h =
+        Number(h);
+
+    const ampm =
+        h >= 12
+        ? "PM"
+        : "AM";
+
+    h =
+        h % 12 || 12;
+
+    return h +
+        ":" +
+        m +
+        " " +
+        ampm;
+
+}
+
+
+loadCalendar();
+
+</script>
+
+</body>
+</html>

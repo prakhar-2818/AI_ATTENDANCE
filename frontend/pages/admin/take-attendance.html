@@ -1,0 +1,1758 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Take Attendance | FaceAttend</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#0f172a;
+    color:white;
+}
+
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    width:240px;
+    height:100vh;
+    background:#111827;
+    border-right:1px solid #334155;
+    padding:25px 15px;
+}
+
+.logo{
+    font-size:24px;
+    font-weight:bold;
+    padding:10px 15px 30px;
+}
+
+.logo span{
+    color:#3b82f6;
+}
+
+.nav a{
+    display:block;
+    padding:13px 15px;
+    margin-bottom:7px;
+    color:#94a3b8;
+    text-decoration:none;
+    border-radius:8px;
+}
+
+.nav a:hover,
+.nav a.active{
+    background:#2563eb;
+    color:white;
+}
+
+.logout{
+    color:#fca5a5!important;
+    cursor:pointer;
+}
+
+.main{
+    margin-left:240px;
+    padding:30px;
+}
+
+.header{
+    margin-bottom:25px;
+}
+
+.header p{
+    color:#94a3b8;
+    margin-top:7px;
+}
+
+.panel{
+    background:#1e293b;
+    border:1px solid #334155;
+    border-radius:15px;
+    padding:25px;
+    margin-bottom:20px;
+}
+
+.camera-box{
+    text-align:center;
+}
+
+video{
+    width:100%;
+    max-width:760px;
+    height:430px;
+    object-fit:cover;
+    background:#020617;
+    border:1px solid #334155;
+    border-radius:14px;
+    display:block;
+    margin:auto;
+}
+
+.btn{
+    padding:12px 18px;
+    border:0;
+    border-radius:8px;
+    background:#2563eb;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+    margin-top:18px;
+}
+
+.danger{
+    background:#7f1d1d;
+    margin-left:8px;
+}
+
+.status{
+    margin-top:15px;
+    color:#94a3b8;
+}
+
+.success{
+    color:#86efac;
+}
+
+.warning{
+    color:#fde68a;
+}
+
+.result{
+    padding:15px;
+    background:#0f172a;
+    border:1px solid #334155;
+    border-radius:10px;
+    margin-top:15px;
+}
+
+@media(max-width:700px){
+
+    .sidebar{
+        position:static;
+        width:100%;
+        height:auto;
+    }
+
+    .main{
+        margin-left:0;
+    }
+
+    video{
+        height:300px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="sidebar">
+
+    <div class="logo">
+        Face<span>Attend</span>
+    </div>
+
+    <div class="nav">
+
+        <a href="dashboard.html">
+            🏠 Dashboard
+        </a>
+
+        <a href="students.html">
+            👨‍🎓 Students
+        </a>
+
+        <a href="calendar.html">
+            📅 Calendar
+        </a>
+
+        <a href="take-attendance.html"
+           class="active">
+            📷 Take Attendance
+        </a>
+
+        <a href="attendance.html">
+            📊 Reports
+        </a>
+
+        <a class="logout"
+           onclick="logout()">
+            ↪ Logout
+        </a>
+
+    </div>
+
+</div>
+
+
+<div class="main">
+
+
+    <div class="header">
+
+        <h1>
+            Take Attendance
+        </h1>
+
+        <p>
+            Students come one by one in front of the camera
+        </p>
+
+    </div>
+
+
+    <div class="panel">
+
+        <h2>
+            Current Class
+        </h2>
+
+        <br>
+
+        <div id="activeClass"
+             class="status">
+
+            Checking current timetable...
+
+        </div>
+
+    </div>
+
+
+    <div class="panel camera-box">
+
+        <video
+            id="camera"
+            autoplay
+            playsinline
+            muted
+        ></video>
+
+
+        <button
+            class="btn"
+            id="startBtn"
+            onclick="startCamera()"
+        >
+            Start Attendance
+        </button>
+
+
+        <button
+            class="btn danger"
+            id="stopBtn"
+            onclick="stopCamera()"
+            style="display:none"
+        >
+            Stop Attendance
+        </button>
+
+
+        <div
+            id="cameraStatus"
+            class="status"
+        >
+            Camera is off
+        </div>
+
+    </div>
+
+
+    <div class="panel">
+
+        <h2>
+            Live Attendance
+        </h2>
+
+        <div
+            id="result"
+            class="result"
+        >
+            No student processed yet.
+        </div>
+
+        <br>
+
+        <p>
+            Present this session:
+            <b id="count">0</b>
+        </p>
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+
+const API =
+    "http://localhost:5000/api";
+
+
+/*
+    Admin authentication
+*/
+
+if(
+    !localStorage.getItem("token") ||
+    localStorage.getItem("role") !== "admin"
+){
+
+    location.href =
+        "login.html";
+
+}
+
+
+/*
+    Logout
+*/
+
+function logout(){
+
+    localStorage.clear();
+
+    location.href =
+        "login.html";
+
+}
+
+
+/*
+    Authorization headers
+*/
+
+function headers(){
+
+    return {
+
+        Authorization:
+            "Bearer " +
+            localStorage.getItem(
+                "token"
+            )
+
+    };
+
+}
+
+
+/*
+    Global variables
+*/
+
+let stream = null;
+
+let activeSubject = null;
+
+let running = false;
+
+let sessionCount = 0;
+
+
+/*
+    Recognition state
+*/
+
+let recognizing = false;
+
+
+/*
+    Liveness state
+*/
+
+let livenessRunning = false;
+
+let challengeSequence = [];
+
+let challengeIndex = 0;
+
+
+/*
+    Get current subject
+*/
+
+async function loadActiveClass(){
+
+    try{
+
+        const response =
+            await fetch(
+                API +
+                "/calendar/active",
+                {
+                    headers:
+                        headers()
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.message
+            );
+
+        }
+
+
+        if(data.active){
+
+            activeSubject =
+                data.slot.subject;
+
+
+            document
+                .getElementById(
+                    "activeClass"
+                )
+                .innerHTML = `
+
+                    <span class="success">
+                        🟢 Active Class
+                    </span>
+
+                    <br><br>
+
+                    <b>
+                        ${data.slot.subject}
+                    </b>
+
+                    <br>
+
+                    ${formatTime(
+                        data.slot.startTime
+                    )}
+
+                    -
+
+                    ${formatTime(
+                        data.slot.endTime
+                    )}
+
+                    <br>
+
+                    ${data.day}
+
+                `;
+
+        }
+
+        else{
+
+            activeSubject =
+                null;
+
+
+            document
+                .getElementById(
+                    "activeClass"
+                )
+                .innerHTML = `
+
+                    <span class="warning">
+                        No active subject right now.
+                    </span>
+
+                    <br><br>
+
+                    Current time:
+                    ${formatTime(
+                        data.currentTime
+                    )}
+
+                `;
+
+        }
+
+
+    }
+    catch(error){
+
+        document
+            .getElementById(
+                "activeClass"
+            )
+            .textContent =
+            error.message;
+
+    }
+
+}
+
+
+/*
+    Start camera
+*/
+
+async function startCamera(){
+
+    await loadActiveClass();
+
+
+    if(!activeSubject){
+
+        alert(
+            "There is no active subject right now."
+        );
+
+        return;
+
+    }
+
+
+    try{
+
+        stream =
+            await navigator
+                .mediaDevices
+                .getUserMedia({
+
+                    video:{
+                        facingMode:"user"
+                    },
+
+                    audio:false
+
+                });
+
+
+        const video =
+            document.getElementById(
+                "camera"
+            );
+
+
+        video.srcObject =
+            stream;
+
+
+        running =
+            true;
+
+
+        document
+            .getElementById(
+                "startBtn"
+            )
+            .style.display =
+            "none";
+
+
+        document
+            .getElementById(
+                "stopBtn"
+            )
+            .style.display =
+            "inline-block";
+
+
+        document
+            .getElementById(
+                "cameraStatus"
+            )
+            .innerHTML =
+
+            `<span class="success">
+
+                🟢 Camera Active
+
+            </span>
+
+            <br>
+
+            Students can come one by one.
+            `;
+
+
+        startRecognitionLoop();
+
+    }
+
+    catch(error){
+
+        alert(
+            "Camera access failed: " +
+            error.message
+        );
+
+    }
+
+}
+
+
+/*
+    Stop camera
+*/
+
+function stopCamera(){
+
+    running =
+        false;
+
+    recognizing =
+        false;
+
+    livenessRunning =
+        false;
+
+
+    if(stream){
+
+        stream
+            .getTracks()
+            .forEach(
+                track =>
+                    track.stop()
+            );
+
+    }
+
+
+    stream =
+        null;
+
+
+    document
+        .getElementById(
+            "camera"
+        )
+        .srcObject =
+        null;
+
+
+    document
+        .getElementById(
+            "startBtn"
+        )
+        .style.display =
+        "inline-block";
+
+
+    document
+        .getElementById(
+            "stopBtn"
+        )
+        .style.display =
+        "none";
+
+
+    document
+        .getElementById(
+            "cameraStatus"
+        )
+        .textContent =
+        "Camera is off.";
+
+}
+
+
+/*
+    Capture one frame
+*/
+
+async function captureFrame(){
+
+    const video =
+        document.getElementById(
+            "camera"
+        );
+
+
+    if(
+        !video.videoWidth ||
+        !video.videoHeight
+    ){
+
+        return null;
+
+    }
+
+
+    const canvas =
+        document.createElement(
+            "canvas"
+        );
+
+
+    canvas.width =
+        video.videoWidth;
+
+    canvas.height =
+        video.videoHeight;
+
+
+    const ctx =
+        canvas.getContext(
+            "2d"
+        );
+
+
+    ctx.drawImage(
+        video,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    return new Promise(
+        resolve => {
+
+            canvas.toBlob(
+                blob =>
+                    resolve(blob),
+                "image/jpeg",
+                0.85
+            );
+
+        }
+    );
+
+}
+
+
+/*
+    FACE RECOGNITION LOOP
+
+    Face Recognition
+          ↓
+    Show student
+          ↓
+    Wait
+          ↓
+    Liveness
+          ↓
+    Attendance
+*/
+
+async function startRecognitionLoop(){
+
+    while(running){
+
+        /*
+            Don't recognize while
+            liveness is running.
+        */
+
+        if(
+            recognizing ||
+            livenessRunning
+        ){
+
+            await wait(500);
+
+            continue;
+
+        }
+
+
+        recognizing =
+            true;
+
+
+        try{
+
+            const video =
+                document.getElementById(
+                    "camera"
+                );
+
+
+            if(
+                video.readyState <
+                HTMLMediaElement.HAVE_CURRENT_DATA
+            ){
+
+                recognizing =
+                    false;
+
+                await wait(500);
+
+                continue;
+
+            }
+
+
+            /*
+                Capture live frame
+            */
+
+            const frame =
+                await captureFrame();
+
+
+            if(!frame){
+
+                recognizing =
+                    false;
+
+                await wait(500);
+
+                continue;
+
+            }
+
+
+            /*
+                Send frame to Node backend
+            */
+
+            const formData =
+                new FormData();
+
+
+            formData.append(
+                "image",
+                frame,
+                "live-frame.jpg"
+            );
+
+
+            const response =
+                await fetch(
+
+                    API +
+                    "/attendance/recognize",
+
+                    {
+
+                        method:"POST",
+
+                        headers:
+                            headers(),
+
+                        body:
+                            formData
+
+                    }
+
+                );
+
+
+            const data =
+                await response.json();
+
+
+            /*
+                =========================
+                FACE RECOGNIZED
+                =========================
+            */
+
+            if(data.success){
+
+                const student =
+                    data.student;
+
+
+                const confidence =
+                    data.confidence;
+
+
+                /*
+                    STEP 1
+
+                    Show recognition result.
+                */
+
+                document
+                    .getElementById(
+                        "result"
+                    )
+                    .innerHTML = `
+
+                        <span class="success">
+
+                            ✓ Face Recognized
+
+                        </span>
+
+                        <br><br>
+
+                        <b>
+                            ${student.name}
+                        </b>
+
+                        <br>
+
+                        ID:
+                        ${student.userId}
+
+                        <br>
+
+                        Confidence:
+                        ${(confidence * 100).toFixed(2)}%
+
+                    `;
+
+
+                /*
+                    IMPORTANT
+
+                    Give 2 seconds so
+                    recognition result
+                    is visible.
+                */
+
+                await wait(2000);
+
+
+                /*
+                    STEP 2
+
+                    Tell user that
+                    liveness is starting.
+                */
+
+                if(!running){
+
+                    recognizing =
+                        false;
+
+                    break;
+
+                }
+
+
+                document
+                    .getElementById(
+                        "result"
+                    )
+                    .innerHTML = `
+
+                        <span class="warning">
+
+                            Starting liveness verification...
+
+                        </span>
+
+                        <br><br>
+
+                        Please follow the instruction.
+
+                    `;
+
+
+                await wait(1500);
+
+
+                /*
+                    STEP 3
+
+                    Run liveness.
+                */
+
+                const livenessPassed =
+                    await runLiveness();
+
+
+                /*
+                    STEP 4
+
+                    Mark attendance
+                    only if liveness
+                    passed.
+                */
+
+                if(livenessPassed){
+
+                    await markAttendance(
+
+                        student.userId,
+
+                        confidence,
+
+                        true
+
+                    );
+
+
+                    /*
+                        Give result time
+                        to remain visible.
+                    */
+
+                    await wait(3000);
+
+                }
+
+            }
+
+
+            /*
+                =========================
+                FACE NOT RECOGNIZED
+                =========================
+            */
+
+            else if(
+
+                data.message ===
+                "Face not recognized"
+
+            ){
+
+                document
+                    .getElementById(
+                        "result"
+                    )
+                    .innerHTML = `
+
+                        <span class="warning">
+
+                            ⚠ Face not recognized
+
+                        </span>
+
+                    `;
+
+            }
+
+
+            /*
+                =========================
+                OTHER AI MESSAGE
+                =========================
+            */
+
+            else{
+
+                document
+                    .getElementById(
+                        "result"
+                    )
+                    .innerHTML = `
+
+                        <span class="status">
+
+                            ${data.message}
+
+                        </span>
+
+                    `;
+
+            }
+
+
+        }
+
+        catch(error){
+
+            console.log(
+                "Recognition error:",
+                error
+            );
+
+        }
+
+
+        recognizing =
+            false;
+
+
+        await wait(1000);
+
+    }
+
+}
+
+
+/*
+    =========================
+    CREATE RANDOM CHALLENGE
+    =========================
+
+    Example:
+
+    blink → left → right
+
+    OR
+
+    right → blink → left
+*/
+
+function createChallenge(){
+
+    const actions = [
+
+        "blink",
+
+        "left",
+
+        "right"
+
+    ];
+
+
+    for(
+
+        let i =
+            actions.length - 1;
+
+        i > 0;
+
+        i--
+
+    ){
+
+        const j =
+            Math.floor(
+
+                Math.random() *
+                (i + 1)
+
+            );
+
+
+        [
+            actions[i],
+            actions[j]
+
+        ] = [
+
+            actions[j],
+            actions[i]
+
+        ];
+
+    }
+
+
+    challengeSequence =
+        actions;
+
+
+    challengeIndex =
+        0;
+
+}
+
+
+/*
+    =========================
+    PERFORM LIVENESS ACTION
+    =========================
+*/
+
+async function performLivenessAction(
+
+    action
+
+){
+
+    let instruction =
+        "";
+
+    let detail =
+        "";
+
+
+    /*
+        BLINK
+    */
+
+    if(action === "blink"){
+
+        instruction =
+            "👁️ AANKH BAND KARO → PHIR KHOL DO";
+
+        detail =
+            "Ek baar naturally blink karo";
+
+    }
+
+
+    /*
+        LEFT
+    */
+
+    if(action === "left"){
+
+        instruction =
+            "⬅️ APNA SIR LEFT SIDE GHUMAO";
+
+        detail =
+            "Apne LEFT side dekho";
+
+    }
+
+
+    /*
+        RIGHT
+    */
+
+    if(action === "right"){
+
+        instruction =
+            "➡️ APNA SIR RIGHT SIDE GHUMAO";
+
+        detail =
+            "Apne RIGHT side dekho";
+
+    }
+
+
+    /*
+        Show instruction
+    */
+
+    document
+        .getElementById(
+            "result"
+        )
+        .innerHTML = `
+
+            <span
+                class="warning"
+                style="font-size:20px;"
+            >
+
+                ${instruction}
+
+            </span>
+
+            <br><br>
+
+            <span
+                style="color:#94a3b8;"
+            >
+
+                ${detail}
+
+            </span>
+
+            <br><br>
+
+            Liveness checking...
+
+        `;
+
+
+    const formData =
+        new FormData();
+
+
+    /*
+        Capture 10 frames
+    */
+
+    for(
+
+        let i = 0;
+
+        i < 10;
+
+        i++
+
+    ){
+
+        if(!running){
+
+            return false;
+
+        }
+
+
+        const frame =
+            await captureFrame();
+
+
+        if(frame){
+
+            formData.append(
+
+                "images",
+
+                frame,
+
+                `frame-${i}.jpg`
+
+            );
+
+        }
+
+
+        await wait(200);
+
+    }
+
+
+    /*
+        Send action
+    */
+
+    formData.append(
+
+        "action",
+
+        action
+
+    );
+
+
+    try{
+
+        const response =
+            await fetch(
+
+                "http://127.0.0.1:8000/liveness",
+
+                {
+
+                    method:"POST",
+
+                    body:
+                        formData
+
+                }
+
+            );
+
+
+        const data =
+            await response.json();
+
+
+        console.log(
+
+            "Liveness response:",
+
+            data
+
+        );
+
+
+        if(
+
+            data.success &&
+            data.passed
+
+        ){
+
+            return true;
+
+        }
+
+
+        return false;
+
+    }
+
+    catch(error){
+
+        console.log(
+
+            "Liveness error:",
+
+            error
+
+        );
+
+
+        return false;
+
+    }
+
+}
+
+
+/*
+    =========================
+    COMPLETE LIVENESS
+    =========================
+*/
+
+async function runLiveness(){
+
+    if(livenessRunning){
+
+        return false;
+
+    }
+
+
+    livenessRunning =
+        true;
+
+
+    /*
+        Generate random
+        challenge sequence.
+    */
+
+    createChallenge();
+
+
+    console.log(
+
+        "Liveness challenge:",
+
+        challengeSequence
+
+    );
+
+
+    /*
+        Run:
+
+        blink
+        left
+        right
+
+        in random order.
+    */
+
+    for(
+
+        let i = 0;
+
+        i < challengeSequence.length;
+
+        i++
+
+    ){
+
+        if(!running){
+
+            livenessRunning =
+                false;
+
+            return false;
+
+        }
+
+
+        const action =
+            challengeSequence[i];
+
+
+        challengeIndex =
+            i;
+
+
+        const passed =
+            await performLivenessAction(
+
+                action
+
+            );
+
+
+        /*
+            Challenge failed
+        */
+
+        if(!passed){
+
+            document
+                .getElementById(
+                    "result"
+                )
+                .innerHTML = `
+
+                    <span class="warning">
+
+                        ❌ Liveness verification failed
+
+                    </span>
+
+                    <br><br>
+
+                    Please try again.
+
+                `;
+
+
+            livenessRunning =
+                false;
+
+
+            return false;
+
+        }
+
+
+        await wait(500);
+
+    }
+
+
+    /*
+        ALL CHALLENGES PASSED
+    */
+
+    document
+        .getElementById(
+            "result"
+        )
+        .innerHTML = `
+
+            <span class="success">
+
+                ✓ Liveness Verified
+
+            </span>
+
+            <br><br>
+
+            Real person detected.
+
+        `;
+
+
+    livenessRunning =
+        false;
+
+
+    return true;
+
+}
+
+
+/*
+    Utility wait
+*/
+
+function wait(ms){
+
+    return new Promise(
+
+        resolve =>
+
+            setTimeout(
+
+                resolve,
+
+                ms
+
+            )
+
+    );
+
+}
+
+
+/*
+    =========================
+    MARK ATTENDANCE
+    =========================
+*/
+
+async function markAttendance(
+
+    studentId,
+
+    confidence,
+
+    livenessPassed
+
+){
+
+    try{
+
+        const response =
+            await fetch(
+
+                API +
+                "/attendance/mark",
+
+                {
+
+                    method:"POST",
+
+                    headers:{
+
+                        ...headers(),
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            studentId,
+
+                            subject:
+                                activeSubject,
+
+                            confidence,
+
+                            livenessPassed
+
+                        })
+
+                }
+
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            throw new Error(
+
+                data.message
+
+            );
+
+        }
+
+
+        /*
+            Count only new attendance
+        */
+
+        if(!data.alreadyMarked){
+
+            sessionCount++;
+
+
+            document
+                .getElementById(
+                    "count"
+                )
+                .textContent =
+                sessionCount;
+
+        }
+
+
+        document
+            .getElementById(
+                "result"
+            )
+            .innerHTML = `
+
+                <span class="success">
+
+                    ✓ ${data.message}
+
+                </span>
+
+            `;
+
+    }
+
+    catch(error){
+
+        document
+            .getElementById(
+                "result"
+            )
+            .innerHTML = `
+
+                <span class="warning">
+
+                    ${error.message}
+
+                </span>
+
+            `;
+
+    }
+
+}
+
+
+/*
+    Format time
+*/
+
+function formatTime(time){
+
+    let [h,m] =
+        time.split(":");
+
+
+    h =
+        Number(h);
+
+
+    const ampm =
+        h >= 12
+        ? "PM"
+        : "AM";
+
+
+    h =
+        h % 12 || 12;
+
+
+    return h +
+        ":" +
+        m +
+        " " +
+        ampm;
+
+}
+
+
+/*
+    Load current class
+*/
+
+loadActiveClass();
+
+
+/*
+    Refresh timetable every
+    30 seconds when camera
+    is not running.
+*/
+
+setInterval(
+
+    () => {
+
+        if(!running){
+
+            loadActiveClass();
+
+        }
+
+    },
+
+    30000
+
+);
+
+
+</script>
+
+
+</body>
+
+</html>

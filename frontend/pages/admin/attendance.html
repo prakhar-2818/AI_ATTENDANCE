@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Attendance Reports | FaceAttend</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#0f172a;
+    color:white;
+}
+
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    width:240px;
+    height:100vh;
+    background:#111827;
+    border-right:1px solid #334155;
+    padding:25px 15px;
+}
+
+.logo{
+    font-size:24px;
+    font-weight:bold;
+    padding:10px 15px 30px;
+}
+
+.logo span{
+    color:#3b82f6;
+}
+
+.nav a{
+    display:block;
+    padding:13px 15px;
+    margin-bottom:7px;
+    color:#94a3b8;
+    text-decoration:none;
+    border-radius:8px;
+}
+
+.nav a:hover,
+.nav a.active{
+    background:#2563eb;
+    color:white;
+}
+
+.logout{
+    color:#fca5a5!important;
+    cursor:pointer;
+}
+
+.main{
+    margin-left:240px;
+    padding:30px;
+}
+
+.header{
+    margin-bottom:25px;
+}
+
+.header p{
+    color:#94a3b8;
+    margin-top:7px;
+}
+
+.panel{
+    background:#1e293b;
+    border:1px solid #334155;
+    border-radius:15px;
+    padding:25px;
+}
+
+.filters{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:25px;
+}
+
+.filters input,
+.filters select{
+    padding:11px;
+    background:#0f172a;
+    border:1px solid #475569;
+    border-radius:8px;
+    color:white;
+}
+
+.btn{
+    padding:11px 17px;
+    border:0;
+    border-radius:8px;
+    background:#2563eb;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin-bottom:25px;
+}
+
+.card{
+    background:#0f172a;
+    border:1px solid #334155;
+    border-radius:12px;
+    padding:18px;
+}
+
+.card p{
+    color:#94a3b8;
+    font-size:13px;
+}
+
+.card h2{
+    margin-top:8px;
+}
+
+.table-wrap{
+    overflow:auto;
+}
+
+.table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.table th,
+.table td{
+    padding:13px;
+    text-align:left;
+    border-bottom:1px solid #334155;
+}
+
+.table th{
+    color:#94a3b8;
+    font-size:13px;
+}
+
+.success{
+    color:#86efac;
+}
+
+.warning{
+    color:#fde68a;
+}
+
+.empty{
+    text-align:center;
+    padding:30px;
+    color:#64748b;
+}
+
+@media(max-width:1000px){
+
+    .cards{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+@media(max-width:700px){
+
+    .sidebar{
+        position:static;
+        width:100%;
+        height:auto;
+    }
+
+    .main{
+        margin-left:0;
+    }
+
+    .cards{
+        grid-template-columns:1fr;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="sidebar">
+
+    <div class="logo">
+        Face<span>Attend</span>
+    </div>
+
+    <div class="nav">
+
+        <a href="dashboard.html">
+            🏠 Dashboard
+        </a>
+
+        <a href="students.html">
+            👨‍🎓 Students
+        </a>
+
+        <a href="calendar.html">
+            📅 Calendar
+        </a>
+
+        <a href="take-attendance.html">
+            📷 Take Attendance
+        </a>
+
+        <a href="attendance.html"
+           class="active">
+            📊 Reports
+        </a>
+
+        <a class="logout"
+           onclick="logout()">
+            ↪ Logout
+        </a>
+
+    </div>
+
+</div>
+
+
+<div class="main">
+
+    <div class="header">
+
+        <h1>
+            Attendance Reports
+        </h1>
+
+        <p>
+            Attendance records from MongoDB
+        </p>
+
+    </div>
+
+
+    <div class="panel">
+
+        <div class="filters">
+
+            <input
+                type="date"
+                id="date"
+            >
+
+
+            <select id="subject">
+
+                <option value="">
+                    All Subjects
+                </option>
+
+                <option>
+                    Data Structures
+                </option>
+
+                <option>
+                    DBMS
+                </option>
+
+                <option>
+                    Operating Systems
+                </option>
+
+                <option>
+                    Computer Networks
+                </option>
+
+                <option>
+                    Java
+                </option>
+
+            </select>
+
+
+            <select id="status">
+
+                <option value="">
+                    All Status
+                </option>
+
+                <option>
+                    Present
+                </option>
+
+                <option>
+                    Absent
+                </option>
+
+            </select>
+
+
+            <button
+                class="btn"
+                onclick="loadAttendance()"
+            >
+                Filter
+            </button>
+
+        </div>
+
+
+        <div class="cards">
+
+            <div class="card">
+                <p>Total Records</p>
+                <h2 id="total">0</h2>
+            </div>
+
+            <div class="card">
+                <p>Present</p>
+                <h2 id="present">0</h2>
+            </div>
+
+            <div class="card">
+                <p>Absent</p>
+                <h2 id="absent">0</h2>
+            </div>
+
+            <div class="card">
+                <p>Attendance %</p>
+                <h2 id="percentage">0%</h2>
+            </div>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+            <table class="table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Student ID
+                        </th>
+
+                        <th>
+                            Student
+                        </th>
+
+                        <th>
+                            Subject
+                        </th>
+
+                        <th>
+                            Date
+                        </th>
+
+                        <th>
+                            Time
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="rows">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const API =
+    "http://localhost:5000/api";
+
+
+if(
+    !localStorage.getItem("token") ||
+    localStorage.getItem("role") !== "admin"
+){
+
+    location.href =
+        "login.html";
+
+}
+
+
+function logout(){
+
+    localStorage.clear();
+
+    location.href =
+        "login.html";
+
+}
+
+
+function headers(){
+
+    return {
+
+        Authorization:
+            "Bearer " +
+            localStorage.getItem(
+                "token"
+            )
+
+    };
+
+}
+
+
+async function loadAttendance(){
+
+    try{
+
+        const params =
+            new URLSearchParams();
+
+
+        const date =
+            document.getElementById(
+                "date"
+            ).value;
+
+
+        const subject =
+            document.getElementById(
+                "subject"
+            ).value;
+
+
+        const status =
+            document.getElementById(
+                "status"
+            ).value;
+
+
+        if(date)
+            params.set(
+                "date",
+                date
+            );
+
+
+        if(subject)
+            params.set(
+                "subject",
+                subject
+            );
+
+
+        if(status)
+            params.set(
+                "status",
+                status
+            );
+
+
+        const response =
+            await fetch(
+                API +
+                "/attendance?" +
+                params.toString(),
+                {
+                    headers:
+                        headers()
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.message
+            );
+
+        }
+
+
+        const records =
+            data.attendance;
+
+
+        const present =
+            records.filter(
+                record =>
+                    record.status ===
+                    "Present"
+            ).length;
+
+
+        const absent =
+            records.filter(
+                record =>
+                    record.status ===
+                    "Absent"
+            ).length;
+
+
+        document
+            .getElementById("total")
+            .textContent =
+            records.length;
+
+
+        document
+            .getElementById("present")
+            .textContent =
+            present;
+
+
+        document
+            .getElementById("absent")
+            .textContent =
+            absent;
+
+
+        document
+            .getElementById("percentage")
+            .textContent =
+            records.length
+            ? Math.round(
+                present /
+                records.length *
+                100
+            ) + "%"
+            : "0%";
+
+
+        const rows =
+            document.getElementById(
+                "rows"
+            );
+
+
+        if(records.length === 0){
+
+            rows.innerHTML = `
+                <tr>
+                    <td colspan="6"
+                        class="empty">
+                        No attendance records found.
+                    </td>
+                </tr>
+            `;
+
+            return;
+
+        }
+
+
+        rows.innerHTML =
+            records.map(
+                record => `
+
+                <tr>
+
+                    <td>
+                        ${record.studentId}
+                    </td>
+
+                    <td>
+                        ${record.studentName}
+                    </td>
+
+                    <td>
+                        ${record.subject}
+                    </td>
+
+                    <td>
+                        ${record.date}
+                    </td>
+
+                    <td>
+                        ${record.time}
+                    </td>
+
+                    <td class="${
+                        record.status ===
+                        "Present"
+                        ? "success"
+                        : "warning"
+                    }">
+
+                        ${record.status}
+
+                    </td>
+
+                </tr>
+
+                `
+            ).join("");
+
+    }
+    catch(error){
+
+        alert(error.message);
+
+    }
+
+}
+
+
+loadAttendance();
+
+</script>
+
+</body>
+
+</html>

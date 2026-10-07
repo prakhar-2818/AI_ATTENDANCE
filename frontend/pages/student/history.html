@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Attendance History | FaceAttend</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#0f172a;
+    color:white;
+}
+
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    width:240px;
+    height:100vh;
+
+    background:#111827;
+
+    border-right:1px solid #334155;
+
+    padding:25px 15px;
+}
+
+.logo{
+    font-size:24px;
+    font-weight:bold;
+    padding:10px 15px 30px;
+}
+
+.logo span{
+    color:#3b82f6;
+}
+
+.nav a{
+    display:block;
+    padding:13px 15px;
+    margin-bottom:7px;
+
+    color:#94a3b8;
+
+    text-decoration:none;
+
+    border-radius:8px;
+}
+
+.nav a:hover,
+.nav a.active{
+    background:#2563eb;
+    color:white;
+}
+
+.logout{
+    color:#fca5a5!important;
+    cursor:pointer;
+}
+
+.main{
+    margin-left:240px;
+    padding:30px;
+}
+
+.header p{
+    color:#94a3b8;
+    margin-top:7px;
+}
+
+.panel{
+    background:#1e293b;
+    border:1px solid #334155;
+    border-radius:15px;
+    padding:22px;
+    margin-top:25px;
+}
+
+.filters{
+    display:flex;
+    gap:10px;
+    margin-bottom:20px;
+}
+
+.filters select{
+    padding:11px;
+
+    background:#0f172a;
+
+    border:1px solid #475569;
+
+    border-radius:8px;
+
+    color:white;
+}
+
+.btn{
+    padding:11px 16px;
+
+    border:0;
+
+    border-radius:8px;
+
+    background:#2563eb;
+
+    color:white;
+
+    font-weight:bold;
+
+    cursor:pointer;
+}
+
+.table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.table th,
+.table td{
+    text-align:left;
+
+    padding:13px;
+
+    border-bottom:1px solid #334155;
+}
+
+.table th{
+    color:#94a3b8;
+    font-size:13px;
+}
+
+.success{
+    color:#86efac;
+}
+
+.empty{
+    text-align:center;
+    padding:30px;
+    color:#64748b;
+}
+
+@media(max-width:700px){
+
+    .sidebar{
+        position:static;
+        width:100%;
+        height:auto;
+    }
+
+    .main{
+        margin-left:0;
+    }
+
+    .filters{
+        flex-direction:column;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="sidebar">
+
+    <div class="logo">
+        Face<span>Attend</span>
+    </div>
+
+    <div class="nav">
+
+        <a href="dashboard.html">
+            🏠 Dashboard
+        </a>
+
+        <a
+            href="history.html"
+            class="active"
+        >
+            📊 Attendance History
+        </a>
+
+        <a
+            class="logout"
+            onclick="logout()"
+        >
+            ↪ Logout
+        </a>
+
+    </div>
+
+</div>
+
+
+<div class="main">
+
+    <div class="header">
+
+        <h1>
+            Attendance History
+        </h1>
+
+        <p>
+            Your complete attendance record
+        </p>
+
+    </div>
+
+
+    <div class="panel">
+
+        <div class="filters">
+
+            <select id="subject">
+
+                <option value="">
+                    All Subjects
+                </option>
+
+                <option>
+                    Data Structures
+                </option>
+
+                <option>
+                    DBMS
+                </option>
+
+                <option>
+                    Operating Systems
+                </option>
+
+                <option>
+                    Computer Networks
+                </option>
+
+                <option>
+                    Java
+                </option>
+
+            </select>
+
+
+            <button
+                class="btn"
+                onclick="loadHistory()"
+            >
+                Filter
+            </button>
+
+        </div>
+
+
+        <div id="table"></div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const API =
+    "http://localhost:5000/api";
+
+
+const token =
+    localStorage.getItem(
+        "token"
+    );
+
+
+const user =
+    JSON.parse(
+        localStorage.getItem(
+            "user"
+        ) || "null"
+    );
+
+
+if(
+    !token ||
+    !user ||
+    user.role !== "student"
+){
+
+    location.href =
+        "login.html";
+
+}
+
+
+function logout(){
+
+    localStorage.clear();
+
+    location.href =
+        "login.html";
+
+}
+
+
+async function loadHistory(){
+
+    try{
+
+        const response =
+            await fetch(
+                API +
+                "/attendance/student/" +
+                encodeURIComponent(
+                    user.userId
+                ),
+                {
+                    headers:{
+                        Authorization:
+                            "Bearer " +
+                            token
+                    }
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.message
+            );
+
+        }
+
+
+        let records =
+            data.attendance;
+
+
+        const subject =
+            document
+                .getElementById(
+                    "subject"
+                )
+                .value;
+
+
+        if(subject){
+
+            records =
+                records.filter(
+                    record =>
+                        record.subject ===
+                        subject
+                );
+
+        }
+
+
+        const container =
+            document.getElementById(
+                "table"
+            );
+
+
+        if(records.length === 0){
+
+            container.innerHTML = `
+
+                <div class="empty">
+                    No records found.
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        container.innerHTML = `
+
+            <table class="table">
+
+                <tr>
+
+                    <th>
+                        Subject
+                    </th>
+
+                    <th>
+                        Date
+                    </th>
+
+                    <th>
+                        Time
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                </tr>
+
+
+                ${records.map(
+                    record => `
+
+                    <tr>
+
+                        <td>
+                            ${record.subject}
+                        </td>
+
+                        <td>
+                            ${record.date}
+                        </td>
+
+                        <td>
+                            ${record.time}
+                        </td>
+
+                        <td class="success">
+                            ${record.status}
+                        </td>
+
+                    </tr>
+
+                    `
+                ).join("")}
+
+            </table>
+
+        `;
+
+    }
+    catch(error){
+
+        alert(
+            error.message
+        );
+
+    }
+
+}
+
+
+loadHistory();
+
+</script>
+
+</body>
+
+</html>

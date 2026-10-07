@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Student Dashboard | FaceAttend</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#0f172a;
+    color:white;
+}
+
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    width:240px;
+    height:100vh;
+
+    background:#111827;
+
+    border-right:1px solid #334155;
+
+    padding:25px 15px;
+}
+
+.logo{
+    font-size:24px;
+    font-weight:bold;
+
+    padding:10px 15px 30px;
+}
+
+.logo span{
+    color:#3b82f6;
+}
+
+.nav a{
+    display:block;
+
+    padding:13px 15px;
+
+    margin-bottom:7px;
+
+    color:#94a3b8;
+
+    text-decoration:none;
+
+    border-radius:8px;
+}
+
+.nav a:hover,
+.nav a.active{
+    background:#2563eb;
+    color:white;
+}
+
+.logout{
+    color:#fca5a5!important;
+    cursor:pointer;
+}
+
+.main{
+    margin-left:240px;
+    padding:30px;
+}
+
+.header p{
+    color:#94a3b8;
+    margin-top:7px;
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+
+    gap:15px;
+
+    margin:25px 0;
+}
+
+.card,
+.panel{
+    background:#1e293b;
+
+    border:1px solid #334155;
+
+    border-radius:15px;
+
+    padding:22px;
+}
+
+.card p{
+    color:#94a3b8;
+}
+
+.card h2{
+    font-size:28px;
+    margin-top:8px;
+}
+
+.table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.table th,
+.table td{
+    text-align:left;
+
+    padding:13px;
+
+    border-bottom:1px solid #334155;
+}
+
+.table th{
+    color:#94a3b8;
+    font-size:13px;
+}
+
+.success{
+    color:#86efac;
+}
+
+.muted{
+    color:#94a3b8;
+}
+
+.empty{
+    text-align:center;
+    padding:30px;
+    color:#64748b;
+}
+
+@media(max-width:700px){
+
+    .sidebar{
+        position:static;
+        width:100%;
+        height:auto;
+    }
+
+    .main{
+        margin-left:0;
+    }
+
+    .cards{
+        grid-template-columns:1fr;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="sidebar">
+
+    <div class="logo">
+        Face<span>Attend</span>
+    </div>
+
+    <div class="nav">
+
+        <a
+            href="dashboard.html"
+            class="active"
+        >
+            🏠 Dashboard
+        </a>
+
+        <a href="history.html">
+            📊 Attendance History
+        </a>
+
+        <a
+            class="logout"
+            onclick="logout()"
+        >
+            ↪ Logout
+        </a>
+
+    </div>
+
+</div>
+
+
+<div class="main">
+
+    <div class="header">
+
+        <h1>
+            Student Dashboard
+        </h1>
+
+        <p>
+            View your attendance
+        </p>
+
+    </div>
+
+
+    <div class="cards">
+
+        <div class="card">
+
+            <p>
+                Overall Attendance
+            </p>
+
+            <h2 id="overall">
+                -
+            </h2>
+
+        </div>
+
+
+        <div class="card">
+
+            <p>
+                Total Present
+            </p>
+
+            <h2 id="present">
+                -
+            </h2>
+
+        </div>
+
+
+        <div class="card">
+
+            <p>
+                Total Records
+            </p>
+
+            <h2 id="total">
+                -
+            </h2>
+
+        </div>
+
+    </div>
+
+
+    <div class="panel">
+
+        <h2>
+            Recent Attendance
+        </h2>
+
+        <br>
+
+        <div
+            id="recent"
+            class="muted"
+        >
+            Loading...
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const API =
+    "http://localhost:5000/api";
+
+
+const token =
+    localStorage.getItem(
+        "token"
+    );
+
+
+const user =
+    JSON.parse(
+        localStorage.getItem(
+            "user"
+        ) || "null"
+    );
+
+
+if(
+    !token ||
+    !user ||
+    user.role !== "student"
+){
+
+    location.href =
+        "login.html";
+
+}
+
+
+function logout(){
+
+    localStorage.clear();
+
+    location.href =
+        "login.html";
+
+}
+
+
+async function loadAttendance(){
+
+    try{
+
+        const response =
+            await fetch(
+                API +
+                "/attendance/student/" +
+                encodeURIComponent(
+                    user.userId
+                ),
+                {
+                    headers:{
+                        Authorization:
+                            "Bearer " +
+                            token
+                    }
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.message
+            );
+
+        }
+
+
+        const records =
+            data.attendance;
+
+
+        const present =
+            records.filter(
+                record =>
+                    record.status ===
+                    "Present"
+            ).length;
+
+
+        document
+            .getElementById(
+                "present"
+            )
+            .textContent =
+            present;
+
+
+        document
+            .getElementById(
+                "total"
+            )
+            .textContent =
+            records.length;
+
+
+        document
+            .getElementById(
+                "overall"
+            )
+            .textContent =
+            records.length
+            ?
+            Math.round(
+                present /
+                records.length *
+                100
+            ) + "%"
+            :
+            "0%";
+
+
+        const recent =
+            records.slice(0,8);
+
+
+        const container =
+            document.getElementById(
+                "recent"
+            );
+
+
+        if(recent.length === 0){
+
+            container.innerHTML = `
+                <div class="empty">
+                    No attendance records yet.
+                </div>
+            `;
+
+            return;
+
+        }
+
+
+        container.innerHTML = `
+
+            <table class="table">
+
+                <tr>
+
+                    <th>
+                        Subject
+                    </th>
+
+                    <th>
+                        Date
+                    </th>
+
+                    <th>
+                        Time
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                </tr>
+
+
+                ${recent.map(
+                    record => `
+
+                    <tr>
+
+                        <td>
+                            ${record.subject}
+                        </td>
+
+                        <td>
+                            ${record.date}
+                        </td>
+
+                        <td>
+                            ${record.time}
+                        </td>
+
+                        <td class="success">
+                            ${record.status}
+                        </td>
+
+                    </tr>
+
+                    `
+                ).join("")}
+
+            </table>
+
+        `;
+
+    }
+    catch(error){
+
+        document
+            .getElementById(
+                "recent"
+            )
+            .textContent =
+            error.message;
+
+    }
+
+}
+
+
+loadAttendance();
+
+</script>
+
+</body>
+
+</html>

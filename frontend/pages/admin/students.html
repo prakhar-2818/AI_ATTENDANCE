@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Students | FaceAttend</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#0f172a;
+    color:white;
+}
+
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    width:240px;
+    height:100vh;
+    background:#111827;
+    border-right:1px solid #334155;
+    padding:25px 15px;
+}
+
+.logo{
+    font-size:24px;
+    font-weight:bold;
+    padding:10px 15px 30px;
+}
+
+.logo span{
+    color:#3b82f6;
+}
+
+.nav a{
+    display:block;
+    padding:13px 15px;
+    margin-bottom:7px;
+    color:#94a3b8;
+    text-decoration:none;
+    border-radius:8px;
+}
+
+.nav a:hover,
+.nav a.active{
+    background:#2563eb;
+    color:white;
+}
+
+.logout{
+    color:#fca5a5!important;
+    cursor:pointer;
+}
+
+.main{
+    margin-left:240px;
+    padding:30px;
+}
+
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+}
+
+.header p{
+    color:#94a3b8;
+    margin-top:7px;
+}
+
+.btn{
+    padding:11px 17px;
+    border:0;
+    border-radius:8px;
+    background:#2563eb;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.btn:hover{
+    background:#1d4ed8;
+}
+
+.panel{
+    background:#1e293b;
+    border:1px solid #334155;
+    border-radius:15px;
+    padding:25px;
+}
+
+.table-wrap{
+    overflow:auto;
+}
+
+.table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.table th,
+.table td{
+    text-align:left;
+    padding:14px;
+    border-bottom:1px solid #334155;
+}
+
+.table th{
+    color:#94a3b8;
+    font-size:13px;
+}
+
+.success{
+    color:#86efac;
+}
+
+.warning{
+    color:#fde68a;
+}
+
+.danger{
+    background:#7f1d1d;
+}
+
+.file-input{
+    display:none;
+}
+
+.upload-btn{
+    padding:9px 14px;
+    border:0;
+    border-radius:7px;
+    background:#2563eb;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.upload-btn:hover{
+    background:#1d4ed8;
+}
+
+.change-btn{
+    padding:9px 14px;
+    border:0;
+    border-radius:7px;
+    background:#475569;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.change-btn:hover{
+    background:#334155;
+}
+
+@media(max-width:700px){
+
+    .sidebar{
+        position:static;
+        width:100%;
+        height:auto;
+    }
+
+    .main{
+        margin-left:0;
+    }
+
+    .header{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:15px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="sidebar">
+
+    <div class="logo">
+        Face<span>Attend</span>
+    </div>
+
+    <div class="nav">
+
+        <a href="dashboard.html">
+            🏠 Dashboard
+        </a>
+
+        <a href="students.html" class="active">
+            👨‍🎓 Students
+        </a>
+
+        <a href="calendar.html">
+            📅 Calendar
+        </a>
+
+        <a href="take-attendance.html">
+            📷 Take Attendance
+        </a>
+
+        <a href="attendance.html">
+            📊 Reports
+        </a>
+
+        <a class="logout" onclick="logout()">
+            ↪ Logout
+        </a>
+
+    </div>
+
+</div>
+
+
+<div class="main">
+
+    <div class="header">
+
+        <div>
+
+            <h1>
+                Students
+            </h1>
+
+            <p>
+                Manage student accounts
+            </p>
+
+        </div>
+
+        <button
+            class="btn"
+            onclick="addStudent()"
+        >
+            + Add Student
+        </button>
+
+    </div>
+
+
+    <div class="panel">
+
+        <div class="table-wrap">
+
+            <table class="table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Student ID
+                        </th>
+
+                        <th>
+                            Name
+                        </th>
+
+                        <th>
+                            Email
+                        </th>
+
+                        <th>
+                            Face Status
+                        </th>
+
+                        <th>
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="studentRows">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const API = "http://localhost:5000/api";
+
+
+if(
+    !localStorage.getItem("token") ||
+    localStorage.getItem("role") !== "admin"
+){
+
+    location.href =
+        "login.html";
+
+}
+
+
+function headers(json=false){
+
+    const h = {
+
+        Authorization:
+            "Bearer " +
+            localStorage.getItem("token")
+
+    };
+
+    if(json){
+
+        h["Content-Type"] =
+            "application/json";
+
+    }
+
+    return h;
+
+}
+
+
+function logout(){
+
+    localStorage.clear();
+
+    location.href =
+        "login.html";
+
+}
+
+
+/* =========================================
+   LOAD STUDENTS
+========================================= */
+
+async function loadStudents(){
+
+    try{
+
+        const response =
+            await fetch(
+                API + "/students",
+                {
+                    headers:
+                        headers()
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.message
+            );
+
+        }
+
+
+        const rows =
+            document.getElementById(
+                "studentRows"
+            );
+
+
+        if(data.students.length === 0){
+
+            rows.innerHTML = `
+                <tr>
+
+                    <td
+                        colspan="5"
+                        style="text-align:center"
+                    >
+
+                        No students found.
+
+                    </td>
+
+                </tr>
+            `;
+
+            return;
+
+        }
+
+
+        rows.innerHTML =
+            data.students.map(
+                student => `
+
+                <tr>
+
+                    <td>
+                        ${student.userId}
+                    </td>
+
+                    <td>
+                        ${student.name}
+                    </td>
+
+                    <td>
+                        ${student.email || "-"}
+                    </td>
+
+                    <td class="${
+                        student.faceRegistered
+                        ? "success"
+                        : "warning"
+                    }">
+
+                        ${
+                            student.faceRegistered
+                            ? "Registered"
+                            : "Pending"
+                        }
+
+                    </td>
+
+                    <td>
+
+                        ${
+                            student.faceRegistered
+
+                            ?
+
+                            `
+                            <button
+                                class="change-btn"
+                                onclick="selectFace(
+                                    '${student._id}',
+                                    '${student.name}'
+                                )"
+                            >
+                                Change Face
+                            </button>
+                            `
+
+                            :
+
+                            `
+                            <button
+                                class="upload-btn"
+                                onclick="selectFace(
+                                    '${student._id}',
+                                    '${student.name}'
+                                )"
+                            >
+                                Upload Face
+                            </button>
+                            `
+                        }
+
+                    </td>
+
+                </tr>
+
+                `
+            )
+            .join("");
+
+    }
+
+    catch(error){
+
+        alert(error.message);
+
+    }
+
+}
+
+
+/* =========================================
+   CREATE STUDENT
+========================================= */
+
+async function addStudent(){
+
+    const userId =
+        prompt("Student ID:");
+
+    if(!userId)
+        return;
+
+
+    const name =
+        prompt("Student Name:");
+
+    if(!name)
+        return;
+
+
+    const email =
+        prompt("Student Email:") || "";
+
+
+    const password =
+        prompt("Student Password:");
+
+    if(!password)
+        return;
+
+
+    try{
+
+        const response =
+            await fetch(
+                API + "/students",
+                {
+                    method:"POST",
+
+                    headers:
+                        headers(true),
+
+                    body:
+                        JSON.stringify({
+
+                            userId,
+                            name,
+                            email,
+                            password
+
+                        })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.message
+            );
+
+        }
+
+
+        alert(
+            "Student added successfully"
+        );
+
+
+        loadStudents();
+
+    }
+
+    catch(error){
+
+        alert(error.message);
+
+    }
+
+}
+
+
+/* =========================================
+   SELECT FACE IMAGE
+========================================= */
+
+function selectFace(
+    studentId,
+    studentName
+){
+
+    const input =
+        document.createElement("input");
+
+    input.type =
+        "file";
+
+    input.accept =
+        "image/jpeg,image/png,image/jpg,image/webp";
+
+    input.style.display =
+        "none";
+
+
+    input.onchange =
+        function(){
+
+            const file =
+                input.files[0];
+
+            if(!file)
+                return;
+
+
+            uploadFace(
+                studentId,
+                studentName,
+                file
+            );
+
+        };
+
+
+    document.body.appendChild(input);
+
+    input.click();
+
+}
+
+
+/* =========================================
+   UPLOAD FACE
+========================================= */
+
+async function uploadFace(
+    studentId,
+    studentName,
+    file
+){
+
+    try{
+
+        /* Check file size */
+
+        if(file.size > 5 * 1024 * 1024){
+
+            alert(
+                "Image must be smaller than 5 MB."
+            );
+
+            return;
+
+        }
+
+
+        /* Check image type */
+
+        const allowedTypes = [
+
+            "image/jpeg",
+            "image/png",
+            "image/jpg",
+            "image/webp"
+
+        ];
+
+
+        if(
+            !allowedTypes.includes(
+                file.type
+            )
+        ){
+
+            alert(
+                "Please select a valid image."
+            );
+
+            return;
+
+        }
+
+
+        const formData =
+            new FormData();
+
+
+        /*
+         * IMPORTANT:
+         *
+         * This field name must match
+         * upload.single("faceImage")
+         * in backend.
+         */
+
+        formData.append(
+            "faceImage",
+            file
+        );
+
+
+        const response =
+            await fetch(
+                API +
+                "/students/" +
+                studentId +
+                "/face",
+                {
+                    method:"POST",
+
+                    headers:{
+                        Authorization:
+                            "Bearer " +
+                            localStorage.getItem(
+                                "token"
+                            )
+                    },
+
+                    body:
+                        formData
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.message
+            );
+
+        }
+
+
+        alert(
+            "Face image uploaded successfully for " +
+            studentName
+        );
+
+
+        loadStudents();
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        alert(
+            "Face upload failed: " +
+            error.message
+        );
+
+    }
+
+}
+
+
+loadStudents();
+
+</script>
+
+</body>
+
+</html>

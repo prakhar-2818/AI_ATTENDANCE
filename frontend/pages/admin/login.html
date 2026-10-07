@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Login | FaceAttend</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0f172a;
+            color: white;
+            min-height: 100vh;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 20px;
+        }
+
+        .box {
+            width: 100%;
+            max-width: 420px;
+
+            background: #1e293b;
+            border: 1px solid #334155;
+
+            border-radius: 16px;
+
+            padding: 35px;
+        }
+
+        .logo {
+            font-size: 27px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .logo span {
+            color: #3b82f6;
+        }
+
+        .sub {
+            color: #94a3b8;
+            margin-bottom: 28px;
+        }
+
+        .field {
+            margin-bottom: 17px;
+        }
+
+        .field label {
+            display: block;
+            color: #cbd5e1;
+            font-size: 14px;
+            margin-bottom: 7px;
+        }
+
+        .field input {
+            width: 100%;
+
+            padding: 13px;
+
+            background: #0f172a;
+            border: 1px solid #475569;
+
+            border-radius: 8px;
+
+            color: white;
+            outline: none;
+        }
+
+        .field input:focus {
+            border-color: #3b82f6;
+        }
+
+        .btn {
+            width: 100%;
+
+            padding: 13px;
+
+            border: 0;
+            border-radius: 8px;
+
+            background: #2563eb;
+            color: white;
+
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #1d4ed8;
+        }
+
+        .error {
+            color: #fca5a5;
+
+            margin-top: 15px;
+
+            min-height: 20px;
+
+            text-align: center;
+        }
+
+        .back {
+            display: block;
+
+            text-align: center;
+
+            margin-top: 22px;
+
+            color: #94a3b8;
+
+            text-decoration: none;
+        }
+
+        .back:hover {
+            color: white;
+        }
+    </style>
+</head>
+
+
+<body>
+
+    <div class="box">
+
+        <div class="logo">
+            Face<span>Attend</span>
+        </div>
+
+        <p class="sub">
+            Teacher / Admin Login
+        </p>
+
+
+        <form id="loginForm">
+
+            <div class="field">
+
+                <label>
+                    Admin ID
+                </label>
+
+                <input
+                    type="text"
+                    id="userId"
+                    required
+                    autocomplete="username"
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    required
+                    autocomplete="current-password"
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn"
+            >
+                Login
+            </button>
+
+
+            <div
+                class="error"
+                id="error"
+            ></div>
+
+        </form>
+
+
+        <a
+            class="back"
+            href="../../index.html"
+        >
+            ← Back to Home
+        </a>
+
+    </div>
+
+
+    <script>
+
+        // Backend URL
+        const API =
+            "http://localhost:5000/api";
+
+
+        document
+            .getElementById("loginForm")
+            .addEventListener("submit", async function (e) {
+
+                e.preventDefault();
+
+
+                const userId =
+                    document
+                        .getElementById("userId")
+                        .value
+                        .trim();
+
+
+                const password =
+                    document
+                        .getElementById("password")
+                        .value;
+
+
+                const error =
+                    document
+                        .getElementById("error");
+
+
+                error.textContent = "";
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            API + "/auth/login",
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body: JSON.stringify({
+                                    userId: userId,
+                                    password: password
+                                })
+                            }
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            data.message ||
+                            "Login failed"
+                        );
+                    }
+
+
+                    if (data.user.role !== "admin") {
+
+                        throw new Error(
+                            "Admin account required"
+                        );
+                    }
+
+
+                    // Save login information
+                    localStorage.setItem(
+                        "token",
+                        data.token
+                    );
+
+                    localStorage.setItem(
+                        "role",
+                        data.user.role
+                    );
+
+                    localStorage.setItem(
+                        "user",
+                        JSON.stringify(data.user)
+                    );
+
+
+                    // Go to dashboard
+                    window.location.href =
+                        "dashboard.html";
+
+                }
+
+                catch (err) {
+
+                    error.textContent =
+                        err.message;
+                }
+
+            });
+
+    </script>
+
+</body>
+
+</html>

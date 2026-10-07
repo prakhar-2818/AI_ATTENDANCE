@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard | FaceAttend</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#0f172a;
+    color:white;
+}
+
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    width:240px;
+    height:100vh;
+    background:#111827;
+    border-right:1px solid #334155;
+    padding:25px 15px;
+}
+
+.logo{
+    font-size:24px;
+    font-weight:bold;
+    padding:10px 15px 30px;
+}
+
+.logo span{color:#3b82f6}
+
+.nav a{
+    display:block;
+    padding:13px 15px;
+    margin-bottom:7px;
+    color:#94a3b8;
+    text-decoration:none;
+    border-radius:8px;
+}
+
+.nav a:hover,
+.nav a.active{
+    background:#2563eb;
+    color:white;
+}
+
+.logout{
+    color:#fca5a5!important;
+    cursor:pointer;
+}
+
+.main{
+    margin-left:240px;
+    padding:30px;
+}
+
+.header{
+    margin-bottom:25px;
+}
+
+.header p{
+    color:#94a3b8;
+    margin-top:7px;
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin-bottom:25px;
+}
+
+.card,
+.panel{
+    background:#1e293b;
+    border:1px solid #334155;
+    border-radius:15px;
+    padding:22px;
+}
+
+.card p{
+    color:#94a3b8;
+    font-size:13px;
+    margin-bottom:8px;
+}
+
+.card h2{
+    font-size:28px;
+}
+
+.slot{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:#0f172a;
+    border:1px solid #334155;
+    padding:17px;
+    border-radius:10px;
+    margin-bottom:10px;
+}
+
+.time{
+    color:#60a5fa;
+    min-width:150px;
+}
+
+.subject{
+    font-weight:bold;
+}
+
+.slot-left{
+    display:flex;
+    gap:18px;
+}
+
+.muted{
+    color:#94a3b8;
+}
+
+.empty{
+    text-align:center;
+    color:#64748b;
+    padding:30px;
+}
+
+@media(max-width:1000px){
+    .cards{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:700px){
+    .sidebar{
+        position:static;
+        width:100%;
+        height:auto;
+    }
+
+    .main{
+        margin-left:0;
+    }
+
+    .cards{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+
+    <div class="logo">
+        Face<span>Attend</span>
+    </div>
+
+    <div class="nav">
+
+        <a href="dashboard.html" class="active">
+            🏠 Dashboard
+        </a>
+
+        <a href="students.html">
+            👨‍🎓 Students
+        </a>
+
+        <a href="calendar.html">
+            📅 Calendar
+        </a>
+
+        <a href="take-attendance.html">
+            📷 Take Attendance
+        </a>
+
+        <a href="attendance.html">
+            📊 Reports
+        </a>
+
+        <a class="logout" onclick="logout()">
+            ↪ Logout
+        </a>
+
+    </div>
+
+</div>
+
+
+<div class="main">
+
+    <div class="header">
+
+        <h1>
+            Admin Dashboard
+        </h1>
+
+        <p>
+            Manage students, timetable and attendance
+        </p>
+
+    </div>
+
+
+    <div class="cards">
+
+        <div class="card">
+            <p>Total Students</p>
+            <h2 id="totalStudents">-</h2>
+        </div>
+
+        <div class="card">
+            <p>Total Subjects</p>
+            <h2 id="totalSubjects">-</h2>
+        </div>
+
+        <div class="card">
+            <p>Today's Slots</p>
+            <h2 id="todaySlots">-</h2>
+        </div>
+
+        <div class="card">
+            <p>Today's Attendance</p>
+            <h2 id="todayAttendance">-</h2>
+        </div>
+
+    </div>
+
+
+    <div class="panel">
+
+        <h2>
+            Today's Schedule
+        </h2>
+
+        <br>
+
+        <div id="schedule" class="muted">
+            Loading...
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const API =
+    "http://localhost:5000/api";
+
+const token =
+    localStorage.getItem("token");
+
+const role =
+    localStorage.getItem("role");
+
+
+if(!token || role !== "admin"){
+    window.location.href =
+        "login.html";
+}
+
+
+function logout(){
+
+    localStorage.clear();
+
+    window.location.href =
+        "login.html";
+}
+
+
+function headers(){
+
+    return {
+        "Authorization":
+            "Bearer " +
+            localStorage.getItem("token")
+    };
+
+}
+
+
+function formatTime(time){
+
+    let [h,m] =
+        time.split(":");
+
+    h = Number(h);
+
+    const ampm =
+        h >= 12 ? "PM" : "AM";
+
+    h = h % 12 || 12;
+
+    return h + ":" + m + " " + ampm;
+}
+
+
+async function loadDashboard(){
+
+    try{
+
+        const studentResponse =
+            await fetch(
+                API + "/students",
+                {
+                    headers:headers()
+                }
+            );
+
+
+        const calendarResponse =
+            await fetch(
+                API + "/calendar",
+                {
+                    headers:headers()
+                }
+            );
+
+
+        const attendanceResponse =
+            await fetch(
+                API + "/attendance",
+                {
+                    headers:headers()
+                }
+            );
+
+
+        const students =
+            await studentResponse.json();
+
+        const calendar =
+            await calendarResponse.json();
+
+        const attendance =
+            await attendanceResponse.json();
+
+
+        if(!studentResponse.ok)
+            throw new Error(
+                students.message
+            );
+
+
+        document
+            .getElementById("totalStudents")
+            .textContent =
+            students.students.length;
+
+
+        const subjects =
+            [
+                ...new Set(
+                    calendar.slots.map(
+                        slot => slot.subject
+                    )
+                )
+            ];
+
+
+        document
+            .getElementById("totalSubjects")
+            .textContent =
+            subjects.length;
+
+
+        const days = [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday"
+        ];
+
+
+        const today =
+            days[new Date().getDay()];
+
+
+        const todaySlots =
+            calendar.slots
+                .filter(
+                    slot =>
+                        slot.day === today
+                )
+                .sort(
+                    (a,b) =>
+                        a.startTime.localeCompare(
+                            b.startTime
+                        )
+                );
+
+
+        document
+            .getElementById("todaySlots")
+            .textContent =
+            todaySlots.length;
+
+
+        const todayDate =
+            new Date()
+                .toISOString()
+                .slice(0,10);
+
+
+        const todayAttendance =
+            attendance.attendance.filter(
+                item =>
+                    item.date === todayDate
+            );
+
+
+        const percentage =
+            students.students.length === 0
+            ? 0
+            :
+            Math.round(
+                todayAttendance.length /
+                students.students.length *
+                100
+            );
+
+
+        document
+            .getElementById("todayAttendance")
+            .textContent =
+            percentage + "%";
+
+
+        const schedule =
+            document.getElementById(
+                "schedule"
+            );
+
+
+        if(todaySlots.length === 0){
+
+            schedule.innerHTML =
+                `<div class="empty">
+                    No slots for ${today}.
+                </div>`;
+
+            return;
+        }
+
+
+        schedule.innerHTML =
+            todaySlots.map(
+                slot => `
+
+                <div class="slot">
+
+                    <div class="slot-left">
+
+                        <div class="time">
+                            ${formatTime(slot.startTime)}
+                            -
+                            ${formatTime(slot.endTime)}
+                        </div>
+
+                        <div class="subject">
+                            ${slot.subject}
+                        </div>
+
+                    </div>
+
+                </div>
+
+                `
+            ).join("");
+
+    }
+    catch(error){
+
+        document
+            .getElementById("schedule")
+            .textContent =
+            error.message;
+
+    }
+
+}
+
+
+loadDashboard();
+
+</script>
+
+</body>
+</html>
