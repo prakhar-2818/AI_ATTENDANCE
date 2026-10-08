@@ -1,1135 +1,435 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Attendance Reports | FaceAttend</title>
-
-
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-
-body{
-    font-family:Arial,sans-serif;
-    background:#0f172a;
-    color:white;
-}
-
-
-.sidebar{
-    position:fixed;
-    left:0;
-    top:0;
-    width:240px;
-    height:100vh;
-    background:#111827;
-    border-right:1px solid #334155;
-    padding:25px 15px;
-}
-
-
-.logo{
-    font-size:24px;
-    font-weight:bold;
-    padding:10px 15px 30px;
-}
-
-
-.logo span{
-    color:#3b82f6;
-}
-
-
-.nav a{
-    display:block;
-    padding:13px 15px;
-    margin-bottom:7px;
-    color:#94a3b8;
-    text-decoration:none;
-    border-radius:8px;
-}
-
-
-.nav a:hover,
-.nav a.active{
-    background:#2563eb;
-    color:white;
-}
-
-
-.logout{
-    color:#fca5a5!important;
-    cursor:pointer;
-}
-
-
-.main{
-    margin-left:240px;
-    padding:30px;
-}
-
-
-.header{
-    margin-bottom:25px;
-}
-
-
-.header p{
-    color:#94a3b8;
-    margin-top:7px;
-}
-
-
-.panel{
-    background:#1e293b;
-    border:1px solid #334155;
-    border-radius:15px;
-    padding:25px;
-}
-
-
-.filters{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-    margin-bottom:25px;
-}
-
-
-.filters input,
-.filters select{
-
-    padding:11px;
-
-    background:#0f172a;
-
-    border:1px solid #475569;
-
-    border-radius:8px;
-
-    color:white;
-
-}
-
-
-.btn{
-
-    padding:11px 17px;
-
-    border:0;
-
-    border-radius:8px;
-
-    background:#2563eb;
-
-    color:white;
-
-    font-weight:bold;
-
-    cursor:pointer;
-
-}
-
-
-.btn:hover{
-
-    background:#1d4ed8;
-
-}
-
-
-.cards{
-
-    display:grid;
-
-    grid-template-columns:
-        repeat(4,1fr);
-
-    gap:15px;
-
-    margin-bottom:25px;
-
-}
-
-
-.card{
-
-    background:#0f172a;
-
-    border:1px solid #334155;
-
-    border-radius:12px;
-
-    padding:18px;
-
-}
-
-
-.card p{
-
-    color:#94a3b8;
-
-    font-size:13px;
-
-}
-
-
-.card h2{
-
-    margin-top:8px;
-
-}
-
-
-.table-wrap{
-
-    overflow:auto;
-
-}
-
-
-.table{
-
-    width:100%;
-
-    border-collapse:collapse;
-
-}
-
-
-.table th,
-.table td{
-
-    padding:13px;
-
-    text-align:left;
-
-    border-bottom:
-        1px solid #334155;
-
-}
-
-
-.table th{
-
-    color:#94a3b8;
-
-    font-size:13px;
-
-}
-
-
-.success{
-
-    color:#86efac;
-
-}
-
-
-.warning{
-
-    color:#fde68a;
-
-}
-
-
-.empty{
-
-    text-align:center;
-
-    padding:30px;
-
-    color:#64748b;
-
-}
-
-
-/* =========================================
-   CHANGE BUTTON
-========================================= */
-
-.change-attendance-btn{
-
-    padding:8px 12px;
-
-    border:0;
-
-    border-radius:7px;
-
-    background:#475569;
-
-    color:white;
-
-    font-weight:bold;
-
-    cursor:pointer;
-
-}
-
-
-.change-attendance-btn:hover{
-
-    background:#334155;
-
-}
-
-
-@media(max-width:1000px){
-
-    .cards{
-
-        grid-template-columns:
-            repeat(2,1fr);
-
-    }
-
-}
-
-
-@media(max-width:700px){
-
-    .sidebar{
-
-        position:static;
-
-        width:100%;
-
-        height:auto;
-
-    }
-
-
-    .main{
-
-        margin-left:0;
-
-    }
-
-
-    .cards{
-
-        grid-template-columns:1fr;
-
-    }
-
-}
-
+:root{--sky:#0ea5e9;--sky-d:#0284c7;--teal:#009688;--dark:#1f2937;--ink:#111827;--mute:#6b7280;--line:#e5e7eb;--bg:#f1f5f9;--green:#16a34a;--red:#dc2626;--yellow:#facc15;--r:16px;--sh:0 1px 2px rgba(15,23,42,.04),0 6px 20px rgba(15,23,42,.06)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:"Plus Jakarta Sans",Arial,Helvetica,sans-serif;background:var(--bg);color:#222;display:flex;flex-direction:column;min-height:100vh;
+background-image:radial-gradient(900px 380px at 85% -80px,rgba(14,165,233,.14),transparent 70%),radial-gradient(700px 320px at 10% -60px,rgba(0,150,136,.10),transparent 70%);background-repeat:no-repeat}
+
+/* header */
+.top-header{height:68px;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:fixed;inset:0 0 auto 0;z-index:1000}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#38bdf8,var(--sky-d));display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;font-weight:800;box-shadow:0 6px 14px rgba(14,165,233,.35)}
+.brand-name{font-size:21px;font-weight:800;color:var(--ink);letter-spacing:-.3px}
+.brand-name span{color:var(--sky)}
+.top-right{display:flex;align-items:center;gap:14px}
+.top-icon{width:40px;height:40px;border-radius:12px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:.2s;position:relative}
+.top-icon:hover{background:#e0f2fe;transform:translateY(-1px)}
+.top-icon.dot::after{content:"";position:absolute;top:9px;right:10px;width:8px;height:8px;border-radius:50%;background:var(--red);border:2px solid #fff}
+.welcome-text{font-size:14px;color:#374151;padding:0 6px}
+.welcome-text strong{color:var(--red)}
+.profile{display:flex;align-items:center;gap:8px;padding:4px 10px 4px 4px;border-radius:30px;background:#f3f4f6;font-size:11px;color:var(--mute)}
+.profile-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--sky),var(--teal));display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:15px}
+
+/* sidebar */
+.sidebar{position:fixed;top:68px;left:0;bottom:0;width:76px;background:var(--dark);z-index:900;display:flex;flex-direction:column;align-items:center;padding:16px 0;gap:8px}
+.side-item{width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#d1d5db;text-decoration:none;font-size:21px;cursor:pointer;position:relative;transition:.2s}
+.side-item:hover{background:#374151;color:#fff;transform:translateX(2px)}
+.side-item.active{background:var(--yellow);color:var(--ink);box-shadow:0 6px 16px rgba(250,204,21,.35)}
+.side-item.active::before{content:"";position:absolute;left:-13px;top:12px;bottom:12px;width:4px;border-radius:0 4px 4px 0;background:var(--yellow)}
+.side-item[title]:hover::after{content:attr(title);position:absolute;left:62px;background:var(--ink);color:#fff;font-size:12px;padding:5px 10px;border-radius:8px;white-space:nowrap;pointer-events:none}
+.side-bottom{margin-top:auto}
+
+/* main */
+.main{margin-left:76px;padding-top:68px;flex:1;display:flex;flex-direction:column;min-width:0}
+.content{flex:1;padding:24px 28px 8px;width:100%}
+.page-head{margin-bottom:20px}
+.page-title{font-size:28px;font-weight:800;color:var(--ink);letter-spacing:-.5px}
+.page-sub{font-size:13.5px;color:var(--mute);margin-top:2px}
+
+/* panel */
+.panel{background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;position:relative;margin-bottom:20px}
+.panel::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,var(--sky),var(--teal))}
+.panel-title{color:var(--teal);font-size:15px;font-weight:700;padding:14px 18px;border-bottom:1px solid #f0f2f5;display:flex;align-items:center;gap:9px}
+.panel-title i{font-style:normal;width:28px;height:28px;border-radius:9px;background:#e6f6f4;display:flex;align-items:center;justify-content:center;font-size:14px}
+.panel-body{padding:18px}
+
+/* filters */
+.filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.filters input,.filters select{padding:10px 14px;background:#f9fafb;border:1px solid #d1d5db;border-radius:30px;color:var(--ink);font-family:inherit;font-size:13px;outline:none;transition:.2s;min-width:150px}
+.filters input:focus,.filters select:focus{border-color:var(--sky);box-shadow:0 0 0 3px rgba(14,165,233,.15);background:#fff}
+.btn{padding:10px 20px;border:0;border-radius:30px;background:linear-gradient(135deg,#22c55e,var(--green));color:#fff;font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;box-shadow:0 6px 14px rgba(34,197,94,.3);transition:.2s}
+.btn:hover{transform:translateY(-2px)}
+.btn.delete-btn{background:var(--red);box-shadow:0 6px 14px rgba(220,38,38,.25)}
+
+/* summary cards */
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center;box-shadow:var(--sh)}
+.card p{color:var(--mute);font-size:13px;font-weight:600}
+.card h2{margin-top:6px;font-size:28px;font-weight:800;color:var(--ink)}
+.card.c-present h2{color:var(--green)}
+.card.c-absent h2{color:var(--red)}
+.card.c-pct h2{color:var(--sky-d)}
+
+/* table */
+.table-wrapper{overflow:auto;margin:0 18px 18px;max-height:520px;border-radius:12px;border:1px solid #eef0f3}
+table{width:100%;border-collapse:collapse}
+thead{background:#343434;color:#fff;position:sticky;top:0;z-index:1}
+th{padding:11px 12px;text-align:left;font-size:12.5px;white-space:nowrap;font-weight:600}
+td{padding:11px 12px;border-bottom:1px solid #eef0f3;font-size:13px;color:#1f2937}
+tbody tr{transition:.15s}
+tbody tr:nth-child(even){background:#f8f9fb}
+tbody tr:hover{background:#e0f2fe}
+.empty{text-align:center;padding:35px 10px;color:#9ca3af;font-size:13.5px}
+.success,.warning{font-weight:700}
+.success{color:var(--green)}
+.warning{color:var(--red)}
+.success::before,.warning::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:7px;background:currentColor}
+.manual-btn{padding:7px 14px;border:0;border-radius:30px;color:#fff;font-family:inherit;font-weight:700;font-size:12.5px;cursor:pointer;transition:.2s;white-space:nowrap}
+.absent-btn{background:var(--red)}.absent-btn:hover{background:#b91c1c}
+.present-btn{background:var(--green)}.present-btn:hover{background:#15803d}
+
+/* footer */
+.footer{background:#fff;border-top:1px solid var(--line);padding:16px 28px;display:flex;justify-content:space-between;color:var(--mute);font-size:13px;margin-top:28px}
+:focus-visible{outline:3px solid rgba(14,165,233,.5);outline-offset:2px}
+
+@media(max-width:1000px){.cards{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:750px){
+.top-header{padding:0 12px}.brand-name,.welcome-text,.top-icon:not(.dot){display:none}
+.sidebar{width:56px}.side-item{width:42px;height:42px}.main{margin-left:56px}
+.content{padding:16px 14px 6px}.page-title{font-size:23px}
+.cards{grid-template-columns:1fr}.filters input,.filters select{width:100%}
+.footer{padding:14px;flex-direction:column;gap:6px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
-
 </head>
-
-
 <body>
 
+<header class="top-header">
+  <div class="brand">
+    <div class="brand-logo">F</div>
+    <div class="brand-name">Face<span>Attend</span></div>
+  </div>
+  <div class="top-right">
+    <div class="top-icon">🏠</div>
+    <div class="top-icon dot">🔔</div>
+    <div class="welcome-text">Welcome <strong>Admin</strong></div>
+    <div class="profile"><div class="profile-avatar">A</div><span>▼</span></div>
+  </div>
+</header>
 
-<!-- =========================================
-     SIDEBAR
-========================================= -->
+<aside class="sidebar">
+  <a class="side-item" href="dashboard.html" title="Dashboard">▦</a>
+  <a class="side-item" href="students.html" title="Students">👨‍🎓</a>
+  <a class="side-item" href="calendar.html" title="Calendar">📅</a>
+  <a class="side-item" href="take-attendance.html" title="Take Attendance">📷</a>
+  <a class="side-item active" href="attendance.html" title="Reports">📊</a>
+  <div class="side-bottom"><a class="side-item" onclick="logout()" title="Logout">⚙</a></div>
+</aside>
 
-<div class="sidebar">
+<main class="main">
+<div class="content">
 
-    <div class="logo">
-        Face<span>Attend</span>
+  <div class="page-head">
+    <div class="page-title">Attendance Reports</div>
+    <div class="page-sub">Attendance records from MongoDB</div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"><i>🔎</i>Filters</div>
+    <div class="panel-body">
+      <div class="filters">
+        <input type="date" id="date">
+        <select id="slot"><option value="">Select Date First</option></select>
+        <select id="status">
+          <option value="">All Status</option>
+          <option value="Present">Present</option>
+          <option value="Absent">Absent</option>
+        </select>
+        <button class="btn" onclick="loadAttendance()">Filter</button>
+        <button class="btn delete-btn" onclick="deleteAttendanceBySlot()">Delete Attendance</button>
+      </div>
     </div>
+  </div>
 
+  <div class="cards">
+    <div class="card"><p>Total Records</p><h2 id="total">0</h2></div>
+    <div class="card c-present"><p>Present</p><h2 id="present">0</h2></div>
+    <div class="card c-absent"><p>Absent</p><h2 id="absent">0</h2></div>
+    <div class="card c-pct"><p>Attendance %</p><h2 id="percentage">0%</h2></div>
+  </div>
 
-    <div class="nav">
-
-        <a href="dashboard.html">
-            🏠 Dashboard
-        </a>
-
-
-        <a href="students.html">
-            👨‍🎓 Students
-        </a>
-
-
-        <a href="calendar.html">
-            📅 Calendar
-        </a>
-
-
-        <a href="take-attendance.html">
-            📷 Take Attendance
-        </a>
-
-
-        <a
-            href="attendance.html"
-            class="active"
-        >
-            📊 Reports
-        </a>
-
-
-        <a
-            class="logout"
-            onclick="logout()"
-        >
-            ↪ Logout
-        </a>
-
+  <div class="panel">
+    <div class="panel-title"><i>📊</i>Attendance Records</div>
+    <div style="height:14px"></div>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr><th>Student ID</th><th>Student</th><th>Subject</th><th>Date</th><th>Time</th><th>Status</th><th>Action</th></tr>
+        </thead>
+        <tbody id="rows">
+          <tr><td colspan="7" class="empty">Select a date to view attendance.</td></tr>
+        </tbody>
+      </table>
     </div>
+  </div>
 
 </div>
 
-
-<!-- =========================================
-     MAIN
-========================================= -->
-
-<div class="main">
-
-
-    <div class="header">
-
-        <h1>
-            Attendance Reports
-        </h1>
-
-        <p>
-            Attendance records from MongoDB
-        </p>
-
-    </div>
-
-
-    <div class="panel">
-
-
-        <!-- =====================================
-             FILTERS
-        ====================================== -->
-
-        <div class="filters">
-
-
-            <input
-                type="date"
-                id="date"
-            >
-
-
-            <select id="subject">
-
-                <option value="">
-                    All Subjects
-                </option>
-
-                <option>
-                    DE
-                </option>
-
-                <option>
-                    SEDP
-                </option>
-                <option>
-                    SEDP_LAB
-                </option>
-
-                <option>
-                    APTITUDE
-                </option>
-
-                <option>
-                    SOFT_SKILL
-                </option>
-
-                <option>
-                    PS_LAB
-                </option>
-                <option>
-                    DL
-                </option>
-                <option>
-                    ADB
-                </option>
-                <option>
-                    TOC
-                </option>
-
-            </select>
-
-
-            <select id="status">
-
-                <option value="">
-                    All Status
-                </option>
-
-                <option>
-                    Present
-                </option>
-
-                <option>
-                    Absent
-                </option>
-
-            </select>
-
-
-            <button
-                class="btn"
-                onclick="loadAttendance()"
-            >
-                Filter
-            </button>
-
-
-        </div>
-
-
-        <!-- =====================================
-             CARDS
-        ====================================== -->
-
-        <div class="cards">
-
-
-            <div class="card">
-
-                <p>
-                    Total Records
-                </p>
-
-                <h2 id="total">
-                    0
-                </h2>
-
-            </div>
-
-
-            <div class="card">
-
-                <p>
-                    Present
-                </p>
-
-                <h2 id="present">
-                    0
-                </h2>
-
-            </div>
-
-
-            <div class="card">
-
-                <p>
-                    Absent
-                </p>
-
-                <h2 id="absent">
-                    0
-                </h2>
-
-            </div>
-
-
-            <div class="card">
-
-                <p>
-                    Attendance %
-                </p>
-
-                <h2 id="percentage">
-                    0%
-                </h2>
-
-            </div>
-
-
-        </div>
-
-
-        <!-- =====================================
-             TABLE
-        ====================================== -->
-
-        <div class="table-wrap">
-
-            <table class="table">
-
-
-                <thead>
-
-                    <tr>
-
-                        <th>
-                            Student ID
-                        </th>
-
-                        <th>
-                            Student
-                        </th>
-
-                        <th>
-                            Subject
-                        </th>
-
-                        <th>
-                            Date
-                        </th>
-
-                        <th>
-                            Time
-                        </th>
-
-                        <th>
-                            Status
-                        </th>
-
-                        <th>
-                            Action
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody id="rows">
-
-                </tbody>
-
-
-            </table>
-
-        </div>
-
-
-    </div>
-
-</div>
-
+<footer class="footer">
+  <div>FaceAttend Attendance System</div>
+  <div>© 2026 All Rights Reserved</div>
+  <div>AI Attendance</div>
+</footer>
+</main>
 
 <script>
+const API = "http://localhost:5000/api";
 
-
-// ==========================================
-// API
-// ==========================================
-
-const API =
-    "http://localhost:5000/api";
-
-
-// ==========================================
-// AUTH CHECK
-// ==========================================
-
-if(
-
-    !localStorage.getItem(
-        "token"
-    ) ||
-
-    localStorage.getItem(
-        "role"
-    ) !== "admin"
-
-){
-
-    location.href =
-        "login.html";
-
+if (!localStorage.getItem("token") || localStorage.getItem("role") !== "admin") {
+    location.href = "login.html";
 }
 
-
-// ==========================================
-// LOGOUT
-// ==========================================
-
-function logout(){
-
+function logout() {
     localStorage.clear();
-
-    location.href =
-        "login.html";
-
+    location.href = "login.html";
 }
 
-
-// ==========================================
-// HEADERS
-// ==========================================
-
-function headers(){
-
-    return {
-
-        Authorization:
-            "Bearer " +
-            localStorage.getItem(
-                "token"
-            )
-
-    };
-
+function headers() {
+    return { Authorization: "Bearer " + localStorage.getItem("token") };
 }
 
-
-// ==========================================
-// LOAD ATTENDANCE
-// ==========================================
-
-async function loadAttendance(){
-
-    try{
-
-        const params =
-            new URLSearchParams();
-
-
-        const date =
-            document.getElementById(
-                "date"
-            ).value;
-
-
-        const subject =
-            document.getElementById(
-                "subject"
-            ).value;
-
-
-        const status =
-            document.getElementById(
-                "status"
-            ).value;
-
-
-        if(date){
-
-            params.set(
-                "date",
-                date
-            );
-
-        }
-
-
-        if(subject){
-
-            params.set(
-                "subject",
-                subject
-            );
-
-        }
-
-
-        if(status){
-
-            params.set(
-                "status",
-                status
-            );
-
-        }
-
-
-        const response =
-            await fetch(
-
-                API +
-                "/attendance?" +
-                params.toString(),
-
-                {
-
-                    headers:
-                        headers()
-
-                }
-
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if(!response.ok){
-
-            throw new Error(
-                data.message
-            );
-
-        }
-
-
-        const records =
-            data.attendance;
-
-
-        // =====================================
-        // CALCULATE TOTALS
-        // =====================================
-
-        const present =
-            records.filter(
-
-                record =>
-                    record.status ===
-                    "Present"
-
-            ).length;
-
-
-        const absent =
-            records.filter(
-
-                record =>
-                    record.status ===
-                    "Absent"
-
-            ).length;
-
-
-        document
-            .getElementById(
-                "total"
-            )
-            .textContent =
-                records.length;
-
-
-        document
-            .getElementById(
-                "present"
-            )
-            .textContent =
-                present;
-
-
-        document
-            .getElementById(
-                "absent"
-            )
-            .textContent =
-                absent;
-
-
-        document
-            .getElementById(
-                "percentage"
-            )
-            .textContent =
-
-                records.length
-
-                ?
-
-                Math.round(
-
-                    present /
-                    records.length *
-                    100
-
-                ) + "%"
-
-                :
-
-                "0%";
-
-
-        // =====================================
-        // TABLE
-        // =====================================
-
-        const rows =
-            document.getElementById(
-                "rows"
-            );
-
-
-        if(
-            records.length === 0
-        ){
-
-            rows.innerHTML = `
-
-                <tr>
-
-                    <td
-                        colspan="7"
-                        class="empty"
-                    >
-
-                        No attendance records found.
-
-                    </td>
-
-                </tr>
-
-            `;
-
-            return;
-
-        }
-
-
-        rows.innerHTML =
-            records
-                .map(
-
-                    record => `
-
-                    <tr>
-
-                        <td>
-                            ${record.studentId}
-                        </td>
-
-
-                        <td>
-                            ${record.studentName}
-                        </td>
-
-
-                        <td>
-                            ${record.subject}
-                        </td>
-
-
-                        <td>
-                            ${record.date}
-                        </td>
-
-
-                        <td>
-                            ${record.time}
-                        </td>
-
-
-                        <td
-                            class="${
-                                record.status ===
-                                "Present"
-
-                                ? "success"
-
-                                : "warning"
-                            }"
-                        >
-
-                            ${record.status}
-
-                        </td>
-
-
-                        <td>
-
-                            <button
-                                class="change-attendance-btn"
-                                onclick="changeAttendance(
-                                    '${record._id}',
-                                    '${record.studentName}',
-                                    '${record.status}'
-                                )"
-                            >
-
-                                Change
-
-                            </button>
-
-                        </td>
-
-                    </tr>
-
-                `
-
-                )
-                .join("");
-
-    }
-    catch(error){
-
-        alert(
-            error.message
-        );
-
-    }
-
+function escapeHtml(v) {
+    if (v === null || v === undefined) return "";
+    return String(v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }
 
+function getDayFromDate(date) {
+    const d = new Date(date + "T00:00:00");
+    return ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][d.getDay()];
+}
 
-// ==========================================
-// CHANGE ATTENDANCE
-// ==========================================
+// LOAD SLOTS FOR SELECTED DATE
+async function loadSlotsForDate() {
+    const date = document.getElementById("date").value;
+    const slotSelect = document.getElementById("slot");
 
-async function changeAttendance(
-
-    attendanceId,
-
-    studentName,
-
-    currentStatus
-
-){
-
-    // --------------------------------------
-    // DETERMINE NEW STATUS
-    // --------------------------------------
-
-    const newStatus =
-
-        currentStatus === "Present"
-
-        ?
-
-        "Absent"
-
-        :
-
-        "Present";
-
-
-    // --------------------------------------
-    // CONFIRM
-    // --------------------------------------
-
-    const confirmChange =
-        confirm(
-
-            "Change attendance for " +
-            studentName +
-
-            " from " +
-            currentStatus +
-
-            " to " +
-            newStatus +
-
-            "?"
-
-        );
-
-
-    if(!confirmChange){
-
+    if (!date) {
+        slotSelect.innerHTML = `<option value="">Select Date First</option>`;
         return;
-
     }
 
+    const day = getDayFromDate(date);
 
-    try{
+    try {
+        // 1. current calendar slots
+        const calendarResponse = await fetch(API + "/calendar", { headers: headers() });
+        const calendarData = await calendarResponse.json();
+        if (!calendarResponse.ok) throw new Error(calendarData.message || "Failed to load calendar");
 
-        // ----------------------------------
-        // UPDATE
-        // ----------------------------------
+        const calendarSlots = (calendarData.slots || []).filter(slot => slot.day === day);
 
-        const response =
-            await fetch(
+        // 2. attendance for date
+        const attendanceResponse = await fetch(API + "/attendance?date=" + encodeURIComponent(date), { headers: headers() });
+        const attendanceData = await attendanceResponse.json();
+        if (!attendanceResponse.ok) throw new Error(attendanceData.message || "Failed to load attendance");
 
-                API +
-                "/attendance/" +
-                attendanceId,
+        const attendance = attendanceData.attendance || [];
 
-                {
+        // 3. historical slots from attendance
+        const attendanceSlots = attendance
+            .filter(r => r.startTime && r.endTime)
+            .map(r => ({ subject: r.subject, startTime: r.startTime, endTime: r.endTime }));
 
-                    method:
-                        "PATCH",
+        // 4-5. combine + dedupe
+        const uniqueSlots = [];
+        const slotKeys = new Set();
 
-                    headers:{
+        [...calendarSlots, ...attendanceSlots].forEach(slot => {
+            const key = slot.subject + "|" + slot.startTime + "|" + slot.endTime;
+            if (!slotKeys.has(key)) {
+                slotKeys.add(key);
+                uniqueSlots.push({ subject: slot.subject, startTime: slot.startTime, endTime: slot.endTime });
+            }
+        });
 
-                        Authorization:
-                            "Bearer " +
-                            localStorage.getItem(
-                                "token"
-                            ),
+        // 6. sort
+        uniqueSlots.sort((a, b) => a.startTime.localeCompare(b.startTime));
 
-                        "Content-Type":
-                            "application/json"
+        // 7. populate
+        slotSelect.innerHTML = `<option value="">Select Slot</option>`;
 
-                    },
+        uniqueSlots.forEach(slot => {
+            const option = document.createElement("option");
+            option.value = JSON.stringify(slot);
+            option.textContent = slot.subject + " | " + slot.startTime + " - " + slot.endTime;
+            slotSelect.appendChild(option);
+        });
 
-                    body:
-                        JSON.stringify({
-
-                            status:
-                                newStatus
-
-                        })
-
-                }
-
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if(!response.ok){
-
-            throw new Error(
-
-                data.message ||
-                "Failed to update attendance"
-
-            );
-
+        if (uniqueSlots.length === 0) {
+            slotSelect.innerHTML = `<option value="">No slots for ${day}</option>`;
         }
-
-
-        // ----------------------------------
-        // SUCCESS
-        // ----------------------------------
-
-        alert(
-
-            data.message ||
-            "Attendance updated successfully"
-
-        );
-
-
-        // Reload table
-
-        loadAttendance();
-
+    } catch (error) {
+        console.error("LOAD SLOTS ERROR:", error);
+        slotSelect.innerHTML = `<option value="">Failed to load slots</option>`;
     }
-    catch(error){
-
-        console.error(error);
-
-
-        alert(
-
-            "Attendance update failed: " +
-            error.message
-
-        );
-
-    }
-
 }
 
+// LOAD ATTENDANCE
+async function loadAttendance() {
+    try {
+        const date = document.getElementById("date").value;
+        const slotValue = document.getElementById("slot").value;
+        const status = document.getElementById("status").value;
 
-// ==========================================
-// INITIAL LOAD
-// ==========================================
+        if (!date) {
+            ["total", "present", "absent"].forEach(id => document.getElementById(id).textContent = "0");
+            document.getElementById("percentage").textContent = "0%";
+            document.getElementById("rows").innerHTML =
+                `<tr><td colspan="7" class="empty">Select a date to view attendance.</td></tr>`;
+            return;
+        }
 
-loadAttendance();
+        const params = new URLSearchParams();
+        params.set("date", date);
 
+        if (slotValue) params.set("subject", JSON.parse(slotValue).subject);
+        if (status) params.set("status", status);
+
+        const response = await fetch(API + "/attendance?" + params.toString(), { headers: headers() });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || "Failed to load attendance");
+
+        let records = data.attendance || [];
+
+        // exact slot filter
+        if (slotValue) {
+            const slot = JSON.parse(slotValue);
+            records = records.filter(r =>
+                r.subject === slot.subject &&
+                r.startTime === slot.startTime &&
+                r.endTime === slot.endTime
+            );
+        }
+
+        const present = records.filter(r => r.status === "Present").length;
+        const absent = records.filter(r => r.status === "Absent").length;
+
+        document.getElementById("total").textContent = records.length;
+        document.getElementById("present").textContent = present;
+        document.getElementById("absent").textContent = absent;
+        document.getElementById("percentage").textContent =
+            records.length ? Math.round(present / records.length * 100) + "%" : "0%";
+
+        const rows = document.getElementById("rows");
+
+        if (records.length === 0) {
+            rows.innerHTML = `<tr><td colspan="7" class="empty">No attendance records found.</td></tr>`;
+            return;
+        }
+
+        rows.innerHTML = records.map(r => {
+            const isPresent = r.status === "Present";
+            const newStatus = isPresent ? "Absent" : "Present";
+            return `
+                <tr>
+                    <td>${escapeHtml(r.studentId)}</td>
+                    <td><strong>${escapeHtml(r.studentName)}</strong></td>
+                    <td>${escapeHtml(r.subject)}</td>
+                    <td>${escapeHtml(r.date)}</td>
+                    <td>${escapeHtml(r.time)}</td>
+                    <td class="${isPresent ? "success" : "warning"}">${escapeHtml(r.status)}</td>
+                    <td>
+                        <button type="button"
+                            class="manual-btn ${isPresent ? "absent-btn" : "present-btn"}"
+                            onclick="changeAttendance('${escapeHtml(r._id)}','${newStatus}')">
+                            Mark ${newStatus}
+                        </button>
+                    </td>
+                </tr>`;
+        }).join("");
+    } catch (error) {
+        console.error("LOAD ATTENDANCE ERROR:", error);
+        alert(error.message);
+    }
+}
+
+// MANUAL PRESENT / ABSENT
+async function changeAttendance(attendanceId, newStatus) {
+    try {
+        if (!confirm("Are you sure you want to mark this attendance as " + newStatus + "?")) return;
+
+        const response = await fetch(API + "/attendance/" + attendanceId, {
+            method: "PATCH",
+            headers: { ...headers(), "Content-Type": "application/json" },
+            body: JSON.stringify({ status: newStatus })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || "Failed to update attendance");
+
+        alert(data.message);
+        await loadAttendance();
+    } catch (error) {
+        console.error("CHANGE ATTENDANCE ERROR:", error);
+        alert(error.message);
+    }
+}
+
+// DELETE EXACT DATE + SLOT
+async function deleteAttendanceBySlot() {
+    try {
+        const date = document.getElementById("date").value;
+        const slotValue = document.getElementById("slot").value;
+
+        if (!date) return alert("Please select a date first.");
+        if (!slotValue) return alert("Please select a slot first.");
+
+        const slot = JSON.parse(slotValue);
+
+        const confirmed = confirm(
+            "DELETE ATTENDANCE?\n\n" +
+            "Date: " + date +
+            "\nSubject: " + slot.subject +
+            "\nTime: " + slot.startTime + " - " + slot.endTime +
+            "\n\nThis will permanently delete the attendance records for this exact slot."
+        );
+        if (!confirmed) return;
+
+        const params = new URLSearchParams();
+        params.set("date", date);
+        params.set("subject", slot.subject);
+        params.set("startTime", slot.startTime);
+        params.set("endTime", slot.endTime);
+
+        const response = await fetch(API + "/attendance/delete-by-date-slot?" + params.toString(), {
+            method: "DELETE",
+            headers: headers()
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || "Delete failed");
+
+        alert(data.message);
+
+        // reload slots after delete
+        await loadSlotsForDate();
+        await loadAttendance();
+    } catch (error) {
+        console.error("DELETE ATTENDANCE ERROR:", error);
+        alert("Delete failed: " + error.message);
+    }
+}
+
+document.getElementById("date").addEventListener("change", async function () {
+    await loadSlotsForDate();
+    await loadAttendance();
+});
+
+document.getElementById("slot").addEventListener("change", loadAttendance);
+document.getElementById("status").addEventListener("change", loadAttendance);
+
+async function initialize() {
+    document.getElementById("slot").innerHTML = `<option value="">Select Date First</option>`;
+    await loadAttendance();
+}
+
+initialize();
 </script>
-
-
 </body>
-
 </html>

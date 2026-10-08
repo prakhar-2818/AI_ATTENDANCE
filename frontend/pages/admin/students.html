@@ -1,1882 +1,363 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Students | FaceAttend</title>
-
-
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-
-/* =========================================
-   RESET
-========================================= */
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-
-/* =========================================
-   BODY
-========================================= */
-
-body{
-
-    font-family:Arial,sans-serif;
-
-    background:#0f172a;
-
-    color:white;
-
-}
-
-
-/* =========================================
-   SIDEBAR
-========================================= */
-
-.sidebar{
-
-    position:fixed;
-
-    left:0;
-
-    top:0;
-
-    width:240px;
-
-    height:100vh;
-
-    background:#111827;
-
-    border-right:1px solid #334155;
-
-    padding:25px 15px;
-
-}
-
-
-.logo{
-
-    font-size:24px;
-
-    font-weight:bold;
-
-    padding:10px 15px 30px;
-
-}
-
-
-.logo span{
-
-    color:#3b82f6;
-
-}
-
-
-.nav a{
-
-    display:block;
-
-    padding:13px 15px;
-
-    margin-bottom:7px;
-
-    color:#94a3b8;
-
-    text-decoration:none;
-
-    border-radius:8px;
-
-}
-
-
-.nav a:hover,
-.nav a.active{
-
-    background:#2563eb;
-
-    color:white;
-
-}
-
-
-.logout{
-
-    color:#fca5a5!important;
-
-    cursor:pointer;
-
-}
-
-
-/* =========================================
-   MAIN
-========================================= */
-
-.main{
-
-    margin-left:240px;
-
-    padding:30px;
-
-}
-
-
-/* =========================================
-   HEADER
-========================================= */
-
-.header{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    margin-bottom:25px;
-
-}
-
-
-.header p{
-
-    color:#94a3b8;
-
-    margin-top:7px;
-
-}
-
-
-/* =========================================
-   BUTTON
-========================================= */
-
-.btn{
-
-    padding:11px 17px;
-
-    border:0;
-
-    border-radius:8px;
-
-    background:#2563eb;
-
-    color:white;
-
-    font-weight:bold;
-
-    cursor:pointer;
-
-}
-
-
-.btn:hover{
-
-    background:#1d4ed8;
-
-}
-
-
-/* =========================================
-   PANEL
-========================================= */
-
-.panel{
-
-    background:#1e293b;
-
-    border:1px solid #334155;
-
-    border-radius:15px;
-
-    padding:25px;
-
-}
-
-
-/* =========================================
-   TABLE
-========================================= */
-
-.table-wrap{
-
-    overflow:auto;
-
-}
-
-
-.table{
-
-    width:100%;
-
-    border-collapse:collapse;
-
-}
-
-
-.table th,
-.table td{
-
-    text-align:left;
-
-    padding:14px;
-
-    border-bottom:1px solid #334155;
-
-}
-
-
-.table th{
-
-    color:#94a3b8;
-
-    font-size:13px;
-
-}
-
-
-/* =========================================
-   STATUS
-========================================= */
-
-.success{
-
-    color:#86efac;
-
-}
-
-
-.warning{
-
-    color:#fde68a;
-
-}
-
-
-/* =========================================
-   DANGER
-========================================= */
-
-.danger{
-
-    background:#7f1d1d;
-
-}
-
-
-/* =========================================
-   FILE INPUT
-========================================= */
-
-.file-input{
-
-    display:none;
-
-}
-
-
-/* =========================================
-   UPLOAD BUTTON
-========================================= */
-
-.upload-btn{
-
-    padding:9px 14px;
-
-    border:0;
-
-    border-radius:7px;
-
-    background:#2563eb;
-
-    color:white;
-
-    font-weight:bold;
-
-    cursor:pointer;
-
-}
-
-
-.upload-btn:hover{
-
-    background:#1d4ed8;
-
-}
-
-
-/* =========================================
-   CHANGE BUTTON
-========================================= */
-
-.change-btn{
-
-    padding:9px 14px;
-
-    border:0;
-
-    border-radius:7px;
-
-    background:#475569;
-
-    color:white;
-
-    font-weight:bold;
-
-    cursor:pointer;
-
-}
-
-
-.change-btn:hover{
-
-    background:#334155;
-
-}
-
-
-/* =========================================
-   DELETE BUTTON
-========================================= */
-
-.delete-btn{
-
-    padding:9px 14px;
-
-    border:0;
-
-    border-radius:7px;
-
-    background:#dc2626;
-
-    color:white;
-
-    font-weight:bold;
-
-    cursor:pointer;
-
-    margin-left:6px;
-
-}
-
-
-.delete-btn:hover{
-
-    background:#b91c1c;
-
-}
-
-
-/* =========================================
-   ADD STUDENT MODAL
-========================================= */
-
-.modal{
-
-    display:none;
-
-    position:fixed;
-
-    inset:0;
-
-    background:rgba(0,0,0,0.65);
-
-    z-index:1000;
-
-    align-items:center;
-
-    justify-content:center;
-
-}
-
-
-.modal-box{
-
-    width:420px;
-
-    max-width:90%;
-
-    background:#1e293b;
-
-    border:1px solid #334155;
-
-    border-radius:15px;
-
-    padding:25px;
-
-    box-shadow:
-        0 20px 50px rgba(0,0,0,0.4);
-
-}
-
-
-.modal-box h2{
-
-    margin-bottom:20px;
-
-}
-
-
-.form-group{
-
-    margin-bottom:15px;
-
-}
-
-
-.form-group label{
-
-    display:block;
-
-    margin-bottom:7px;
-
-    color:#cbd5e1;
-
-    font-size:14px;
-
-}
-
-
-.form-group input{
-
-    width:100%;
-
-    padding:11px 12px;
-
-    border:1px solid #475569;
-
-    border-radius:8px;
-
-    background:#0f172a;
-
-    color:white;
-
-    outline:none;
-
-}
-
-
-.form-group input:focus{
-
-    border-color:#2563eb;
-
-}
-
-
-.modal-actions{
-
-    display:flex;
-
-    justify-content:flex-end;
-
-    gap:10px;
-
-    margin-top:20px;
-
-}
-
-
-.cancel-btn{
-
-    padding:11px 17px;
-
-    border:0;
-
-    border-radius:8px;
-
-    background:#475569;
-
-    color:white;
-
-    font-weight:bold;
-
-    cursor:pointer;
-
-}
-
-
-.cancel-btn:hover{
-
-    background:#334155;
-
-}
-
-
-/* =========================================
-   MOBILE
-========================================= */
-
-@media(max-width:700px){
-
-    .sidebar{
-
-        position:static;
-
-        width:100%;
-
-        height:auto;
-
-    }
-
-
-    .main{
-
-        margin-left:0;
-
-    }
-
-
-    .header{
-
-        flex-direction:column;
-
-        align-items:flex-start;
-
-        gap:15px;
-
-    }
-
-}
-
+:root{--sky:#0ea5e9;--sky-d:#0284c7;--teal:#009688;--dark:#1f2937;--ink:#111827;--mute:#6b7280;--line:#e5e7eb;--bg:#f1f5f9;--green:#16a34a;--red:#dc2626;--yellow:#facc15;--r:16px;--sh:0 1px 2px rgba(15,23,42,.04),0 6px 20px rgba(15,23,42,.06)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:"Plus Jakarta Sans",Arial,Helvetica,sans-serif;background:var(--bg);color:#222;display:flex;flex-direction:column;min-height:100vh;
+background-image:radial-gradient(900px 380px at 85% -80px,rgba(14,165,233,.14),transparent 70%),radial-gradient(700px 320px at 10% -60px,rgba(0,150,136,.10),transparent 70%);background-repeat:no-repeat}
+
+/* header */
+.top-header{height:68px;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:fixed;inset:0 0 auto 0;z-index:1000}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#38bdf8,var(--sky-d));display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;font-weight:800;box-shadow:0 6px 14px rgba(14,165,233,.35)}
+.brand-name{font-size:21px;font-weight:800;color:var(--ink);letter-spacing:-.3px}
+.brand-name span{color:var(--sky)}
+.top-right{display:flex;align-items:center;gap:14px}
+.top-icon{width:40px;height:40px;border-radius:12px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:.2s;position:relative}
+.top-icon:hover{background:#e0f2fe;transform:translateY(-1px)}
+.top-icon.dot::after{content:"";position:absolute;top:9px;right:10px;width:8px;height:8px;border-radius:50%;background:var(--red);border:2px solid #fff}
+.welcome-text{font-size:14px;color:#374151;padding:0 6px}
+.welcome-text strong{color:var(--red)}
+.profile{display:flex;align-items:center;gap:8px;padding:4px 10px 4px 4px;border-radius:30px;background:#f3f4f6;font-size:11px;color:var(--mute)}
+.profile-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--sky),var(--teal));display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:15px}
+
+/* sidebar */
+.sidebar{position:fixed;top:68px;left:0;bottom:0;width:76px;background:var(--dark);z-index:900;display:flex;flex-direction:column;align-items:center;padding:16px 0;gap:8px}
+.side-item{width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#d1d5db;text-decoration:none;font-size:21px;cursor:pointer;position:relative;transition:.2s}
+.side-item:hover{background:#374151;color:#fff;transform:translateX(2px)}
+.side-item.active{background:var(--yellow);color:var(--ink);box-shadow:0 6px 16px rgba(250,204,21,.35)}
+.side-item.active::before{content:"";position:absolute;left:-13px;top:12px;bottom:12px;width:4px;border-radius:0 4px 4px 0;background:var(--yellow)}
+.side-item[title]:hover::after{content:attr(title);position:absolute;left:62px;background:var(--ink);color:#fff;font-size:12px;padding:5px 10px;border-radius:8px;white-space:nowrap;pointer-events:none}
+.side-bottom{margin-top:auto}
+
+/* main */
+.main{margin-left:76px;padding-top:68px;flex:1;display:flex;flex-direction:column;min-width:0}
+.content{flex:1;padding:24px 28px 8px;width:100%}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:8px}
+.page-title{font-size:28px;font-weight:800;color:var(--ink);letter-spacing:-.5px}
+.page-sub{font-size:13.5px;color:var(--mute);margin-top:2px}
+.head-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+/* buttons */
+.btn{padding:10px 18px;border:0;border-radius:30px;background:linear-gradient(135deg,#22c55e,var(--green));color:#fff;font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;box-shadow:0 6px 14px rgba(34,197,94,.3);transition:.2s}
+.btn:hover{transform:translateY(-2px)}
+.upload-btn,.change-btn,.delete-btn,.cancel-btn{padding:7px 14px;border:0;border-radius:30px;color:#fff;font-family:inherit;font-weight:700;font-size:12.5px;cursor:pointer;transition:.2s}
+.upload-btn{background:var(--sky)}.upload-btn:hover{background:var(--sky-d)}
+.change-btn{background:#475569}.change-btn:hover{background:var(--dark)}
+.delete-btn{background:var(--red);margin-left:6px}.delete-btn:hover{background:#b91c1c}
+.cancel-btn{background:#475569;padding:10px 18px}.cancel-btn:hover{background:var(--dark)}
+
+/* panel + table */
+.panel{background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;position:relative}
+.panel::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,var(--sky),var(--teal))}
+.table-header{display:flex;justify-content:space-between;align-items:center;padding:18px;gap:12px;flex-wrap:wrap}
+.table-header-title{font-size:16px;font-weight:700;color:#374151}
+.search-box{width:260px;max-width:100%;height:38px;border:1px solid #d1d5db;border-radius:30px;padding:0 16px 0 38px;outline:none;font-family:inherit;font-size:13px;background:#f9fafb url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%239ca3af' stroke-width='2'%3E%3Ccircle cx='7' cy='7' r='5'/%3E%3Cpath d='m11 11 4 4'/%3E%3C/svg%3E") no-repeat 13px center;transition:.2s}
+.search-box:focus{border-color:var(--sky);box-shadow:0 0 0 3px rgba(14,165,233,.15);background-color:#fff}
+.table-wrapper{overflow:auto;margin:0 18px 18px;border-radius:12px;border:1px solid #eef0f3}
+table{width:100%;border-collapse:collapse}
+thead{background:#343434;color:#fff;position:sticky;top:0;z-index:1}
+th{padding:11px 12px;text-align:left;font-size:12.5px;white-space:nowrap;font-weight:600}
+td{padding:11px 12px;border-bottom:1px solid #eef0f3;font-size:13px;color:#1f2937}
+tbody tr{transition:.15s}
+tbody tr:nth-child(even){background:#f8f9fb}
+tbody tr:hover{background:#e0f2fe}
+.empty{text-align:center;padding:35px 10px;color:#9ca3af;font-size:13.5px}
+.badge{display:inline-block;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px}
+.success{background:#dcfce7;color:#15803d}
+.warning{background:#fef3c7;color:#b45309}
+
+/* modal */
+.modal{display:none;position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(3px);z-index:2000;align-items:center;justify-content:center}
+.modal-box{width:420px;max-width:90%;background:#fff;border-radius:var(--r);padding:25px;box-shadow:0 20px 50px rgba(15,23,42,.25)}
+.modal-box h2{margin-bottom:20px;color:var(--ink);font-size:20px;font-weight:800}
+.form-group{margin-bottom:15px}
+.form-group label{display:block;margin-bottom:7px;color:#374151;font-size:13px;font-weight:600}
+.form-group input{width:100%;padding:11px 14px;border:1px solid #d1d5db;border-radius:12px;background:#f9fafb;color:var(--ink);font-family:inherit;outline:none;transition:.2s}
+.form-group input:focus{border-color:var(--sky);box-shadow:0 0 0 3px rgba(14,165,233,.15);background:#fff}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+
+/* footer */
+.footer{background:#fff;border-top:1px solid var(--line);padding:16px 28px;display:flex;justify-content:space-between;color:var(--mute);font-size:13px;margin-top:28px}
+
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:8px}
+:focus-visible{outline:3px solid rgba(14,165,233,.5);outline-offset:2px}
+
+@media(max-width:750px){
+.top-header{padding:0 12px}.brand-name,.welcome-text,.top-icon:not(.dot){display:none}
+.sidebar{width:56px}.side-item{width:42px;height:42px}.main{margin-left:56px}
+.content{padding:16px 14px 6px}.search-box{width:100%}.page-title{font-size:23px}
+.footer{padding:14px;flex-direction:column;gap:6px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
-
 </head>
-
-
 <body>
 
+<header class="top-header">
+  <div class="brand">
+    <div class="brand-logo">F</div>
+    <div class="brand-name">Face<span>Attend</span></div>
+  </div>
+  <div class="top-right">
+    <div class="top-icon">🏠</div>
+    <div class="top-icon dot">🔔</div>
+    <div class="welcome-text">Welcome <strong>Admin</strong></div>
+    <div class="profile"><div class="profile-avatar">A</div><span>▼</span></div>
+  </div>
+</header>
 
-<!-- =========================================
-     SIDEBAR
-========================================= -->
+<aside class="sidebar">
+  <a class="side-item" href="dashboard.html" title="Dashboard">▦</a>
+  <a class="side-item active" href="students.html" title="Students">👨‍🎓</a>
+  <a class="side-item" href="calendar.html" title="Calendar">📅</a>
+  <a class="side-item" href="take-attendance.html" title="Take Attendance">📷</a>
+  <a class="side-item" href="attendance.html" title="Reports">📊</a>
+  <div class="side-bottom"><a class="side-item" onclick="logout()" title="Logout">⚙</a></div>
+</aside>
 
-<div class="sidebar">
+<main class="main">
+<div class="content">
 
-
-    <div class="logo">
-
-        Face<span>Attend</span>
-
+  <div class="page-head">
+    <div>
+      <div class="page-title">Students</div>
+      <div class="page-sub">Manage student accounts and registered faces</div>
     </div>
-
-
-    <div class="nav">
-
-
-        <a href="dashboard.html">
-
-            🏠 Dashboard
-
-        </a>
-
-
-        <a
-            href="students.html"
-            class="active"
-        >
-
-            👨‍🎓 Students
-
-        </a>
-
-
-        <a href="calendar.html">
-
-            📅 Calendar
-
-        </a>
-
-
-        <a href="take-attendance.html">
-
-            📷 Take Attendance
-
-        </a>
-
-
-        <a href="attendance.html">
-
-            📊 Reports
-
-        </a>
-
-
-        <a
-            class="logout"
-            onclick="logout()"
-        >
-
-            ↪ Logout
-
-        </a>
-
-
+    <div class="head-right">
+      <button class="btn" onclick="addStudent()">+ Add Student</button>
     </div>
+  </div>
 
+  <div class="panel">
+    <div class="table-header">
+      <div class="table-header-title">All Students</div>
+      <input id="studentSearch" class="search-box" type="text" placeholder="Search students" oninput="filterStudents()">
+    </div>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr><th>Student ID</th><th>Name</th><th>Email</th><th>Face Status</th><th>Action</th></tr>
+        </thead>
+        <tbody id="studentRows"></tbody>
+      </table>
+    </div>
+  </div>
 
 </div>
 
-
-<!-- =========================================
-     MAIN
-========================================= -->
-
-<div class="main">
-
-
-    <div class="header">
-
-
-        <div>
-
-
-            <h1>
-
-                Students
-
-            </h1>
-
-
-            <p>
-
-                Manage student accounts
-
-            </p>
-
-
-        </div>
-
-
-        <button
-            class="btn"
-            onclick="addStudent()"
-        >
-
-            + Add Student
-
-        </button>
-
-
-    </div>
-
-
-    <!-- =====================================
-         STUDENT TABLE
-    ====================================== -->
-
-    <div class="panel">
-
-
-        <div class="table-wrap">
-
-
-            <table class="table">
-
-
-                <thead>
-
-
-                    <tr>
-
-
-                        <th>
-
-                            Student ID
-
-                        </th>
-
-
-                        <th>
-
-                            Name
-
-                        </th>
-
-
-                        <th>
-
-                            Email
-
-                        </th>
-
-
-                        <th>
-
-                            Face Status
-
-                        </th>
-
-
-                        <th>
-
-                            Action
-
-                        </th>
-
-
-                    </tr>
-
-
-                </thead>
-
-
-                <tbody id="studentRows">
-
-
-                </tbody>
-
-
-            </table>
-
-
-        </div>
-
-
-    </div>
-
-
+<footer class="footer">
+  <div>FaceAttend Attendance System</div>
+  <div>© 2026 All Rights Reserved</div>
+  <div>AI Attendance</div>
+</footer>
+</main>
+
+<!-- ADD STUDENT MODAL -->
+<div id="addStudentModal" class="modal">
+  <div class="modal-box">
+    <h2>Add Student</h2>
+    <form id="addStudentForm">
+      <div class="form-group"><label>Student ID</label>
+        <input type="text" id="studentId" placeholder="Enter student ID" required></div>
+      <div class="form-group"><label>Student Name</label>
+        <input type="text" id="studentName" placeholder="Enter student name" required></div>
+      <div class="form-group"><label>Email</label>
+        <input type="email" id="studentEmail" placeholder="Enter email"></div>
+      <div class="form-group"><label>Password</label>
+        <input type="password" id="studentPassword" placeholder="Enter password" required></div>
+      <div class="modal-actions">
+        <button type="button" class="cancel-btn" onclick="closeAddStudentModal()">Cancel</button>
+        <button type="submit" class="btn">Add Student</button>
+      </div>
+    </form>
+  </div>
 </div>
-
-
-<!-- =========================================
-     ADD STUDENT MODAL
-========================================= -->
-
-<div
-    id="addStudentModal"
-    class="modal"
->
-
-
-    <div class="modal-box">
-
-
-        <h2>
-
-            Add Student
-
-        </h2>
-
-
-        <form id="addStudentForm">
-
-
-            <!-- STUDENT ID -->
-
-            <div class="form-group">
-
-
-                <label>
-
-                    Student ID
-
-                </label>
-
-
-                <input
-                    type="text"
-                    id="studentId"
-                    placeholder="Enter student ID"
-                    required
-                >
-
-
-            </div>
-
-
-            <!-- NAME -->
-
-            <div class="form-group">
-
-
-                <label>
-
-                    Student Name
-
-                </label>
-
-
-                <input
-                    type="text"
-                    id="studentName"
-                    placeholder="Enter student name"
-                    required
-                >
-
-
-            </div>
-
-
-            <!-- EMAIL -->
-
-            <div class="form-group">
-
-
-                <label>
-
-                    Email
-
-                </label>
-
-
-                <input
-                    type="email"
-                    id="studentEmail"
-                    placeholder="Enter email"
-                >
-
-
-            </div>
-
-
-            <!-- PASSWORD -->
-
-            <div class="form-group">
-
-
-                <label>
-
-                    Password
-
-                </label>
-
-
-                <input
-                    type="password"
-                    id="studentPassword"
-                    placeholder="Enter password"
-                    required
-                >
-
-
-            </div>
-
-
-            <!-- BUTTONS -->
-
-            <div class="modal-actions">
-
-
-                <button
-                    type="button"
-                    class="cancel-btn"
-                    onclick="closeAddStudentModal()"
-                >
-
-                    Cancel
-
-                </button>
-
-
-                <button
-                    type="submit"
-                    class="btn"
-                >
-
-                    Add Student
-
-                </button>
-
-
-            </div>
-
-
-        </form>
-
-
-    </div>
-
-
-</div>
-
 
 <script>
+const API = "http://localhost:5000/api";
 
-
-// ==========================================
-// API
-// ==========================================
-
-const API =
-    "http://localhost:5000/api";
-
-
-// ==========================================
-// AUTH CHECK
-// ==========================================
-
-if(
-
-    !localStorage.getItem("token") ||
-
-    localStorage.getItem("role") !== "admin"
-
-){
-
-    location.href =
-        "login.html";
-
+if (!localStorage.getItem("token") || localStorage.getItem("role") !== "admin") {
+    location.href = "login.html";
 }
 
-
-// ==========================================
-// HEADERS
-// ==========================================
-
-function headers(json = false){
-
-    const h = {
-
-        Authorization:
-
-            "Bearer " +
-
-            localStorage.getItem(
-                "token"
-            )
-
-    };
-
-
-    if(json){
-
-        h["Content-Type"] =
-            "application/json";
-
-    }
-
-
+function headers(json = false) {
+    const h = { Authorization: "Bearer " + localStorage.getItem("token") };
+    if (json) h["Content-Type"] = "application/json";
     return h;
-
 }
 
-
-// ==========================================
-// LOGOUT
-// ==========================================
-
-function logout(){
-
+function logout() {
     localStorage.clear();
-
-    location.href =
-        "login.html";
-
+    location.href = "login.html";
 }
 
+function escapeHtml(v) {
+    if (v === null || v === undefined) return "";
+    return String(v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
 
-// ==========================================
 // LOAD STUDENTS
-// ==========================================
+async function loadStudents() {
+    try {
+        const response = await fetch(API + "/students", { headers: headers() });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || "Failed to load students");
 
-async function loadStudents(){
+        const rows = document.getElementById("studentRows");
 
-    try{
-
-        const response =
-
-            await fetch(
-
-                API + "/students",
-
-                {
-
-                    headers:
-                        headers()
-
-                }
-
-            );
-
-
-        const data =
-
-            await response.json();
-
-
-        if(!response.ok){
-
-            throw new Error(
-
-                data.message ||
-
-                "Failed to load students"
-
-            );
-
-        }
-
-
-        const rows =
-
-            document.getElementById(
-                "studentRows"
-            );
-
-
-        // ----------------------------------
-        // NO STUDENTS
-        // ----------------------------------
-
-        if(
-
-            data.students.length === 0
-
-        ){
-
-            rows.innerHTML = `
-
-                <tr>
-
-                    <td
-                        colspan="5"
-                        style="text-align:center"
-                    >
-
-                        No students found.
-
-                    </td>
-
-                </tr>
-
-            `;
-
+        if (data.students.length === 0) {
+            rows.innerHTML = `<tr><td colspan="5" class="empty">No students found.</td></tr>`;
             return;
-
         }
 
+        rows.innerHTML = data.students.map(s => `
+            <tr>
+                <td>${escapeHtml(s.userId)}</td>
+                <td><strong>${escapeHtml(s.name)}</strong></td>
+                <td>${escapeHtml(s.email) || "-"}</td>
+                <td><span class="badge ${s.faceRegistered ? "success" : "warning"}">${s.faceRegistered ? "Registered" : "Pending"}</span></td>
+                <td>
+                    <button class="${s.faceRegistered ? "change-btn" : "upload-btn"}"
+                        onclick="selectFace('${s._id}','${escapeHtml(s.name).replace(/\\/g, "\\\\")}')">
+                        ${s.faceRegistered ? "Change Face" : "Upload Face"}
+                    </button>
+                    <button class="delete-btn"
+                        onclick="deleteStudent('${s._id}','${escapeHtml(s.name).replace(/\\/g, "\\\\")}')">
+                        Delete
+                    </button>
+                </td>
+            </tr>`).join("");
 
-        // ----------------------------------
-        // STUDENT ROWS
-        // ----------------------------------
-
-        rows.innerHTML =
-
-            data.students
-
-                .map(
-
-                    student => `
-
-                <tr>
-
-
-                    <td>
-
-                        ${student.userId}
-
-                    </td>
-
-
-                    <td>
-
-                        ${student.name}
-
-                    </td>
-
-
-                    <td>
-
-                        ${student.email || "-"}
-
-                    </td>
-
-
-                    <td
-                        class="${
-                            student.faceRegistered
-
-                            ? "success"
-
-                            : "warning"
-                        }"
-                    >
-
-                        ${
-                            student.faceRegistered
-
-                            ? "Registered"
-
-                            : "Pending"
-                        }
-
-                    </td>
-
-
-                    <td>
-
-
-                        <!-- FACE BUTTON -->
-
-                        ${
-                            student.faceRegistered
-
-                            ?
-
-                            `
-
-                                <button
-                                    class="change-btn"
-                                    onclick="selectFace(
-                                        '${student._id}',
-                                        '${student.name}'
-                                    )"
-                                >
-
-                                    Change Face
-
-                                </button>
-
-                            `
-
-                            :
-
-                            `
-
-                                <button
-                                    class="upload-btn"
-                                    onclick="selectFace(
-                                        '${student._id}',
-                                        '${student.name}'
-                                    )"
-                                >
-
-                                    Upload Face
-
-                                </button>
-
-                            `
-                        }
-
-
-                        <!-- DELETE BUTTON -->
-
-                        <button
-                            class="delete-btn"
-                            onclick="deleteStudent(
-                                '${student._id}',
-                                '${student.name}'
-                            )"
-                        >
-
-                            Delete
-
-                        </button>
-
-
-                    </td>
-
-
-                </tr>
-
-            `
-
-                )
-
-                .join("");
-
+        filterStudents();
+    } catch (error) {
+        console.error("LOAD STUDENTS ERROR:", error);
+        alert(error.message);
     }
-
-    catch(error){
-
-        console.error(
-
-            "LOAD STUDENTS ERROR:",
-
-            error
-
-        );
-
-
-        alert(
-
-            error.message
-
-        );
-
-    }
-
 }
 
-
-// ==========================================
-// OPEN ADD STUDENT MODAL
-// ==========================================
-
-function addStudent(){
-
-    document
-        .getElementById(
-            "addStudentModal"
-        )
-        .style.display =
-        "flex";
-
-
-    document
-        .getElementById(
-            "studentId"
-        )
-        .focus();
-
+function filterStudents() {
+    const value = document.getElementById("studentSearch").value.toLowerCase().trim();
+    document.querySelectorAll("#studentRows tr").forEach(row => {
+        row.style.display = row.innerText.toLowerCase().includes(value) ? "" : "none";
+    });
 }
 
-
-// ==========================================
-// CLOSE ADD STUDENT MODAL
-// ==========================================
-
-function closeAddStudentModal(){
-
-    document
-        .getElementById(
-            "addStudentModal"
-        )
-        .style.display =
-        "none";
-
-
-    document
-        .getElementById(
-            "addStudentForm"
-        )
-        .reset();
-
+// MODAL
+function addStudent() {
+    document.getElementById("addStudentModal").style.display = "flex";
+    document.getElementById("studentId").focus();
 }
 
+function closeAddStudentModal() {
+    document.getElementById("addStudentModal").style.display = "none";
+    document.getElementById("addStudentForm").reset();
+}
 
-// ==========================================
+document.getElementById("addStudentModal").addEventListener("click", function (e) {
+    if (e.target === this) closeAddStudentModal();
+});
+
 // CREATE STUDENT
-// ==========================================
+document.getElementById("addStudentForm").addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    const userId = document.getElementById("studentId").value.trim();
+    const name = document.getElementById("studentName").value.trim();
+    const email = document.getElementById("studentEmail").value.trim();
+    const password = document.getElementById("studentPassword").value;
+
+    if (!userId) return alert("Please enter Student ID");
+    if (!name) return alert("Please enter Student Name");
+    if (!password) return alert("Please enter Password");
+
+    try {
+        const response = await fetch(API + "/students", {
+            method: "POST",
+            headers: headers(true),
+            body: JSON.stringify({ userId, name, email, password })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || "Failed to create student");
+
+        alert("Student added successfully");
+        closeAddStudentModal();
+        await loadStudents();
+    } catch (error) {
+        console.error("ADD STUDENT ERROR:", error);
+        alert(error.message);
+    }
+});
 
-document
-    .getElementById(
-        "addStudentForm"
-    )
-    .addEventListener(
-
-        "submit",
-
-        async function(event){
-
-            event.preventDefault();
-
-
-            const userId =
-
-                document
-                    .getElementById(
-                        "studentId"
-                    )
-                    .value
-                    .trim();
-
-
-            const name =
-
-                document
-                    .getElementById(
-                        "studentName"
-                    )
-                    .value
-                    .trim();
-
-
-            const email =
-
-                document
-                    .getElementById(
-                        "studentEmail"
-                    )
-                    .value
-                    .trim();
-
-
-            const password =
-
-                document
-                    .getElementById(
-                        "studentPassword"
-                    )
-                    .value;
-
-
-            // ----------------------------------
-            // VALIDATION
-            // ----------------------------------
-
-            if(!userId){
-
-                alert(
-                    "Please enter Student ID"
-                );
-
-                return;
-
-            }
-
-
-            if(!name){
-
-                alert(
-                    "Please enter Student Name"
-                );
-
-                return;
-
-            }
-
-
-            if(!password){
-
-                alert(
-                    "Please enter Password"
-                );
-
-                return;
-
-            }
-
-
-            try{
-
-                const response =
-
-                    await fetch(
-
-                        API + "/students",
-
-                        {
-
-                            method:"POST",
-
-                            headers:
-                                headers(true),
-
-                            body:
-
-                                JSON.stringify({
-
-                                    userId,
-
-                                    name,
-
-                                    email,
-
-                                    password
-
-                                })
-
-                        }
-
-                    );
-
-
-                const data =
-
-                    await response.json();
-
-
-                if(!response.ok){
-
-                    throw new Error(
-
-                        data.message ||
-
-                        "Failed to create student"
-
-                    );
-
-                }
-
-
-                alert(
-
-                    "Student added successfully"
-
-                );
-
-
-                closeAddStudentModal();
-
-
-                await loadStudents();
-
-            }
-
-
-            catch(error){
-
-                console.error(
-
-                    "ADD STUDENT ERROR:",
-
-                    error
-
-                );
-
-
-                alert(
-
-                    error.message
-
-                );
-
-            }
-
-        }
-
-    );
-
-
-// ==========================================
-// CLOSE MODAL WHEN CLICKING OUTSIDE
-// ==========================================
-
-document
-    .getElementById(
-        "addStudentModal"
-    )
-    .addEventListener(
-
-        "click",
-
-        function(event){
-
-            if(
-                event.target ===
-                this
-            ){
-
-                closeAddStudentModal();
-
-            }
-
-        }
-
-    );
-
-
-// ==========================================
 // DELETE STUDENT
-// ==========================================
-
-async function deleteStudent(
-
-    studentId,
-
-    studentName
-
-){
-
-    // --------------------------------------
-    // CONFIRMATION
-    // --------------------------------------
-
-    const confirmDelete =
-
-        confirm(
-
-            "Are you sure you want to delete " +
-
-            studentName +
-
-            "?\n\n" +
-
-            "This will also delete:\n" +
-
-            "- Student account\n" +
-
-            "- Registered face\n" +
-
-            "- Attendance records"
-
-        );
-
-
-    if(!confirmDelete){
-
-        return;
-
-    }
-
-
-    try{
-
-        // ----------------------------------
-        // DELETE REQUEST
-        // ----------------------------------
-
-        const response =
-
-            await fetch(
-
-                API +
-
-                "/students/" +
-
-                studentId,
-
-                {
-
-                    method:
-                        "DELETE",
-
-                    headers:
-                        headers()
-
-                }
-
-            );
-
-
-        const data =
-
-            await response.json();
-
-
-        // ----------------------------------
-        // ERROR
-        // ----------------------------------
-
-        if(!response.ok){
-
-            throw new Error(
-
-                data.message ||
-
-                "Failed to delete student"
-
-            );
-
-        }
-
-
-        // ----------------------------------
-        // SUCCESS
-        // ----------------------------------
-
-        alert(
-
-            data.message ||
-
-            "Student deleted successfully"
-
-        );
-
-
-        // Reload student list
-
-        await loadStudents();
-
-    }
-
-
-    catch(error){
-
-        console.error(
-
-            "DELETE STUDENT ERROR:",
-
-            error
-
-        );
-
-
-        alert(
-
-            "Delete failed: " +
-
-            error.message
-
-        );
-
-    }
-
-}
-
-
-// ==========================================
-// SELECT FACE IMAGE
-// ==========================================
-
-function selectFace(
-
-    studentId,
-
-    studentName
-
-){
-
-    const input =
-
-        document.createElement(
-            "input"
-        );
-
-
-    input.type =
-        "file";
-
-
-    input.accept =
-        "image/jpeg,image/png,image/jpg,image/webp";
-
-
-    input.style.display =
-        "none";
-
-
-    input.onchange =
-
-        function(){
-
-            const file =
-
-                input.files[0];
-
-
-            if(!file){
-
-                return;
-
-            }
-
-
-            uploadFace(
-
-                studentId,
-
-                studentName,
-
-                file
-
-            );
-
-        };
-
-
-    document.body.appendChild(
-        input
+async function deleteStudent(studentId, studentName) {
+    const ok = confirm(
+        "Are you sure you want to delete " + studentName + "?\n\n" +
+        "This will also delete:\n- Student account\n- Registered face\n- Attendance records"
     );
+    if (!ok) return;
 
+    try {
+        const response = await fetch(API + "/students/" + studentId, { method: "DELETE", headers: headers() });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || "Failed to delete student");
 
-    input.click();
-
-}
-
-
-// ==========================================
-// UPLOAD FACE
-// ==========================================
-
-async function uploadFace(
-
-    studentId,
-
-    studentName,
-
-    file
-
-){
-
-    try{
-
-        // ----------------------------------
-        // FILE SIZE
-        // ----------------------------------
-
-        if(
-
-            file.size >
-
-            5 * 1024 * 1024
-
-        ){
-
-            alert(
-
-                "Image must be smaller than 5 MB."
-
-            );
-
-            return;
-
-        }
-
-
-        // ----------------------------------
-        // FILE TYPE
-        // ----------------------------------
-
-        const allowedTypes = [
-
-            "image/jpeg",
-
-            "image/png",
-
-            "image/jpg",
-
-            "image/webp"
-
-        ];
-
-
-        if(
-
-            !allowedTypes.includes(
-                file.type
-            )
-
-        ){
-
-            alert(
-
-                "Please select a valid image."
-
-            );
-
-            return;
-
-        }
-
-
-        // ----------------------------------
-        // FORM DATA
-        // ----------------------------------
-
-        const formData =
-
-            new FormData();
-
-
-        formData.append(
-
-            "faceImage",
-
-            file
-
-        );
-
-
-        // ----------------------------------
-        // SEND TO BACKEND
-        // ----------------------------------
-
-        const response =
-
-            await fetch(
-
-                API +
-
-                "/students/" +
-
-                studentId +
-
-                "/face",
-
-                {
-
-                    method:
-                        "POST",
-
-                    headers:{
-
-                        Authorization:
-
-                            "Bearer " +
-
-                            localStorage.getItem(
-                                "token"
-                            )
-
-                    },
-
-                    body:
-                        formData
-
-                }
-
-            );
-
-
-        const data =
-
-            await response.json();
-
-
-        if(!response.ok){
-
-            throw new Error(
-
-                data.message ||
-
-                "Face upload failed"
-
-            );
-
-        }
-
-
-        alert(
-
-            "Face image uploaded successfully for " +
-
-            studentName
-
-        );
-
-
+        alert(data.message || "Student deleted successfully");
         await loadStudents();
-
+    } catch (error) {
+        console.error("DELETE STUDENT ERROR:", error);
+        alert("Delete failed: " + error.message);
     }
-
-
-    catch(error){
-
-        console.error(
-
-            "FACE UPLOAD ERROR:",
-
-            error
-
-        );
-
-
-        alert(
-
-            "Face upload failed: " +
-
-            error.message
-
-        );
-
-    }
-
 }
 
+// FACE UPLOAD
+function selectFace(studentId, studentName) {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/jpeg,image/png,image/jpg,image/webp";
+    input.style.display = "none";
+    input.onchange = function () {
+        const file = input.files[0];
+        input.remove();
+        if (file) uploadFace(studentId, studentName, file);
+    };
+    document.body.appendChild(input);
+    input.click();
+}
 
-// ==========================================
-// INITIAL LOAD
-// ==========================================
+async function uploadFace(studentId, studentName, file) {
+    try {
+        if (file.size > 5 * 1024 * 1024) return alert("Image must be smaller than 5 MB.");
+
+        const allowed = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
+        if (!allowed.includes(file.type)) return alert("Please select a valid image.");
+
+        const formData = new FormData();
+        formData.append("faceImage", file);
+
+        const response = await fetch(API + "/students/" + studentId + "/face", {
+            method: "POST",
+            headers: { Authorization: "Bearer " + localStorage.getItem("token") },
+            body: formData
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || "Face upload failed");
+
+        alert("Face image uploaded successfully for " + studentName);
+        await loadStudents();
+    } catch (error) {
+        console.error("FACE UPLOAD ERROR:", error);
+        alert("Face upload failed: " + error.message);
+    }
+}
 
 loadStudents();
-
 </script>
-
-
 </body>
-
 </html>

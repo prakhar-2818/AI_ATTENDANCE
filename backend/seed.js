@@ -7,120 +7,51 @@ const User = require("./models/User");
 const CalendarSlot = require("./models/CalendarSlot");
 
 async function seed() {
-
     try {
-
-        await mongoose.connect(
-            process.env.MONGO_URI
-        );
+        await mongoose.connect(process.env.MONGO_URI);
 
         console.log("MongoDB Connected");
 
-
+        // =========================
         // ADMIN
-        const adminPassword =
-            await bcrypt.hash(
-                "admin123",
-                10
-            );
+        // =========================
+
+        const adminPassword = await bcrypt.hash(
+            "admin123",
+            10
+        );
 
         await User.updateOne(
-
             {
                 userId: "admin001"
             },
-
             {
                 $set: {
-
                     name: "Admin Teacher",
-
-                    passwordHash:
-                        adminPassword,
-
+                    email: "admin@faceattend.com",
+                    passwordHash: adminPassword,
                     role: "admin",
-
-                    email:
-                        "admin@faceattend.com"
+                    faceRegistered: false,
+                    faceImage: null,
+                    faceEmbedding: null
                 }
             },
-
             {
                 upsert: true
             }
         );
 
-
-        // STUDENT 1
-        const studentPassword =
-            await bcrypt.hash(
-                "123456",
-                10
-            );
-
-        await User.updateOne(
-
-            {
-                userId: "stu001"
-            },
-
-            {
-                $set: {
-
-                    name: "Rahul Sharma",
-
-                    passwordHash:
-                        studentPassword,
-
-                    role: "student",
-
-                    email:
-                        "rahul@faceattend.com"
-                }
-            },
-
-            {
-                upsert: true
-            }
-        );
+        console.log("Admin created/updated");
 
 
-        // STUDENT 2
-        await User.updateOne(
-
-            {
-                userId: "stu002"
-            },
-
-            {
-                $set: {
-
-                    name: "Aman Kumar",
-
-                    passwordHash:
-                        studentPassword,
-
-                    role: "student",
-
-                    email:
-                        "aman@faceattend.com"
-                }
-            },
-
-            {
-                upsert: true
-            }
-        );
-
-
+        // =========================
         // SAMPLE CALENDAR
-        const count =
-            await CalendarSlot.countDocuments();
+        // =========================
+
+        const count = await CalendarSlot.countDocuments();
 
         if (count === 0) {
-
             await CalendarSlot.insertMany([
-
                 {
                     day: "Monday",
                     subject: "Data Structures",
@@ -143,19 +74,19 @@ async function seed() {
                 }
             ]);
 
-            console.log(
-                "Sample calendar added"
-            );
+            console.log("Sample calendar added");
+        } else {
+            console.log("Calendar already exists, skipping");
         }
 
-        console.log("Seed completed");
+
+        console.log("Seed completed successfully");
 
     } catch (error) {
-
+        console.log("Seed Error:");
         console.log(error.message);
 
     } finally {
-
         await mongoose.disconnect();
     }
 }

@@ -4,495 +4,241 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard | FaceAttend</title>
-
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+:root{--sky:#0ea5e9;--sky-d:#0284c7;--teal:#009688;--dark:#1f2937;--ink:#111827;--mute:#6b7280;--line:#e5e7eb;--bg:#f1f5f9;--green:#16a34a;--red:#dc2626;--yellow:#facc15;--r:16px;--sh:0 1px 2px rgba(15,23,42,.04),0 6px 20px rgba(15,23,42,.06)}
 *{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Plus Jakarta Sans",Arial,Helvetica,sans-serif;background:var(--bg);color:#222;min-height:100vh;display:flex;flex-direction:column;
+background-image:radial-gradient(900px 380px at 85% -80px,rgba(14,165,233,.14),transparent 70%),radial-gradient(700px 320px at 10% -60px,rgba(0,150,136,.10),transparent 70%);background-repeat:no-repeat}
 
-body{
-    font-family:Arial,sans-serif;
-    background:#0f172a;
-    color:white;
-}
+/* header */
+.top-header{height:68px;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:fixed;inset:0 0 auto 0;z-index:1000}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#38bdf8,var(--sky-d));display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;font-weight:800;box-shadow:0 6px 14px rgba(14,165,233,.35)}
+.brand-name{font-size:21px;font-weight:800;color:var(--ink);letter-spacing:-.3px}
+.brand-name span{color:var(--sky)}
+.top-right{display:flex;align-items:center;gap:14px}
+.role-badge{font-size:12px;font-weight:700;color:#92400e;background:#fef3c7;padding:5px 12px;border-radius:30px}
+.welcome-text{font-size:14px;color:#374151}
+.welcome-text strong{color:var(--red)}
+.profile-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--sky),var(--teal));display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff}
 
-.sidebar{
-    position:fixed;
-    left:0;
-    top:0;
-    width:240px;
-    height:100vh;
-    background:#111827;
-    border-right:1px solid #334155;
-    padding:25px 15px;
-}
+/* sidebar */
+.sidebar{position:fixed;top:68px;left:0;bottom:0;width:76px;background:var(--dark);z-index:900;display:flex;flex-direction:column;align-items:center;padding:16px 0;gap:8px}
+.side-item{width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#d1d5db;text-decoration:none;font-size:21px;cursor:pointer;position:relative;transition:.2s}
+.side-item:hover{background:#374151;color:#fff;transform:translateX(2px)}
+.side-item.active{background:var(--yellow);color:var(--ink);box-shadow:0 6px 16px rgba(250,204,21,.35)}
+.side-item.active::before{content:"";position:absolute;left:-13px;top:12px;bottom:12px;width:4px;border-radius:0 4px 4px 0;background:var(--yellow)}
+.side-item[title]:hover::after{content:attr(title);position:absolute;left:62px;background:var(--ink);color:#fff;font-size:12px;padding:5px 10px;border-radius:8px;white-space:nowrap;pointer-events:none;z-index:5}
+.side-bottom{margin-top:auto}
 
-.logo{
-    font-size:24px;
-    font-weight:bold;
-    padding:10px 15px 30px;
-}
+/* main - fits the screen */
+.main{margin-left:76px;padding-top:68px;flex:1;display:flex;flex-direction:column;min-width:0}
+.content{padding:24px 28px 20px;height:calc(100vh - 68px);min-height:520px;display:flex;flex-direction:column;gap:18px}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:8px;flex:none}
+.page-title{font-size:26px;font-weight:800;color:var(--ink);letter-spacing:-.5px}
+.page-sub{font-size:13.5px;color:var(--mute);margin-top:2px}
+.date-chip{font-size:13px;font-weight:600;color:var(--sky-d);background:#e0f2fe;padding:8px 14px;border-radius:30px}
 
-.logo span{color:#3b82f6}
+/* stat cards */
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;flex:none}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:18px;display:flex;align-items:center;gap:14px;position:relative;overflow:hidden;transition:.25s;animation:rise .5s cubic-bezier(.2,.7,.2,1) both}
+.card:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(15,23,42,.10)}
+.card::after{content:"";position:absolute;right:-28px;top:-28px;width:96px;height:96px;border-radius:50%;background:var(--tint);opacity:.55}
+.card:nth-child(2){animation-delay:.06s}.card:nth-child(3){animation-delay:.12s}.card:nth-child(4){animation-delay:.18s}
+.card-ico{width:50px;height:50px;border-radius:15px;background:var(--tint);color:var(--c);display:flex;align-items:center;justify-content:center;font-size:23px;flex-shrink:0;position:relative;z-index:1}
+.card p{color:var(--mute);font-size:13px;font-weight:600;margin-bottom:2px}
+.card h2{font-size:30px;font-weight:800;color:var(--ink);letter-spacing:-1px;line-height:1.1}
+.c1{--c:#0284c7;--tint:#e0f2fe}.c2{--c:#009688;--tint:#ccfbf1}.c3{--c:#b45309;--tint:#fef3c7}.c4{--c:#16a34a;--tint:#dcfce7}
 
-.nav a{
-    display:block;
-    padding:13px 15px;
-    margin-bottom:7px;
-    color:#94a3b8;
-    text-decoration:none;
-    border-radius:8px;
-}
+/* schedule panel */
+.panel{background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;display:flex;flex-direction:column;flex:1;min-height:0;position:relative;animation:rise .55s .24s cubic-bezier(.2,.7,.2,1) both}
+.panel::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,var(--sky),var(--teal))}
+.panel-title{color:var(--teal);font-size:16px;font-weight:700;padding:16px 20px;border-bottom:1px solid #f0f2f5;display:flex;align-items:center;gap:10px;flex:none}
+.panel-title i{font-style:normal;width:30px;height:30px;border-radius:9px;background:#e6f6f4;display:flex;align-items:center;justify-content:center;font-size:15px}
+#schedule{flex:1;min-height:0;overflow:auto;padding:16px 20px 20px}
+.muted{color:var(--mute)}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
-.nav a:hover,
-.nav a.active{
-    background:#2563eb;
-    color:white;
-}
+.slot{display:flex;justify-content:space-between;align-items:center;background:#f8fafc;border:1px solid var(--line);border-left:4px solid var(--sky);padding:14px 18px;border-radius:14px;margin-bottom:10px;transition:.2s}
+.slot:hover{background:#eef6fd;transform:translateX(3px)}
+.slot-left{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.time{color:var(--sky-d);min-width:170px;font-weight:700;font-size:14px}
+.subject{font-weight:700;color:var(--ink);font-size:15px}
+.badge{font-size:11.5px;font-weight:800;padding:4px 12px;border-radius:30px;white-space:nowrap}
+.slot.now{border-left-color:var(--green);background:#f0fdf4}
+.slot.now .badge{background:var(--green);color:#fff}
+.slot.next{border-left-color:var(--teal)}
+.slot.next .badge{background:#ccfbf1;color:#0f766e}
+.slot.later .badge{background:#e0f2fe;color:var(--sky-d)}
+.slot.done{border-left-color:#cbd5e1;opacity:.65}
+.slot.done .badge{background:#e5e7eb;color:var(--mute)}
+.empty{text-align:center;color:#9ca3af;padding:50px 10px;font-size:14px}
 
-.logout{
-    color:#fca5a5!important;
-    cursor:pointer;
-}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:8px}
+:focus-visible{outline:3px solid rgba(14,165,233,.5);outline-offset:2px}
 
-.main{
-    margin-left:240px;
-    padding:30px;
-}
-
-.header{
-    margin-bottom:25px;
-}
-
-.header p{
-    color:#94a3b8;
-    margin-top:7px;
-}
-
-.cards{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:15px;
-    margin-bottom:25px;
-}
-
-.card,
-.panel{
-    background:#1e293b;
-    border:1px solid #334155;
-    border-radius:15px;
-    padding:22px;
-}
-
-.card p{
-    color:#94a3b8;
-    font-size:13px;
-    margin-bottom:8px;
-}
-
-.card h2{
-    font-size:28px;
-}
-
-.slot{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    background:#0f172a;
-    border:1px solid #334155;
-    padding:17px;
-    border-radius:10px;
-    margin-bottom:10px;
-}
-
-.time{
-    color:#60a5fa;
-    min-width:150px;
-}
-
-.subject{
-    font-weight:bold;
-}
-
-.slot-left{
-    display:flex;
-    gap:18px;
-}
-
-.muted{
-    color:#94a3b8;
-}
-
-.empty{
-    text-align:center;
-    color:#64748b;
-    padding:30px;
-}
-
-@media(max-width:1000px){
-    .cards{
-        grid-template-columns:repeat(2,1fr);
-    }
-}
-
-@media(max-width:700px){
-    .sidebar{
-        position:static;
-        width:100%;
-        height:auto;
-    }
-
-    .main{
-        margin-left:0;
-    }
-
-    .cards{
-        grid-template-columns:1fr;
-    }
-}
+@media(max-width:1000px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:750px){
+.top-header{padding:0 12px}.brand-name,.welcome-text{display:none}
+.sidebar{width:56px;overflow-y:auto}.side-item{width:42px;height:42px;font-size:18px;flex-shrink:0}.main{margin-left:56px}
+.content{padding:16px 14px;height:auto}.cards{grid-template-columns:1fr}.panel{min-height:380px}
+.page-title{font-size:22px}.time{min-width:0}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
-
 <body>
 
-<div class="sidebar">
+<header class="top-header">
+  <div class="brand">
+    <div class="brand-logo">F</div>
+    <div class="brand-name">Face<span>Attend</span></div>
+  </div>
+  <div class="top-right">
+    <span class="role-badge">Admin</span>
+    <div class="welcome-text">Welcome <strong id="topName">Admin</strong></div>
+    <div class="profile-avatar" id="profileAvatar">A</div>
+  </div>
+</header>
 
-    <div class="logo">
-        Face<span>Attend</span>
+<aside class="sidebar">
+  <a class="side-item active" href="dashboard.html" title="Dashboard">🏠</a>
+  <a class="side-item" href="students.html" title="Students">👨‍🎓</a>
+  <a class="side-item" href="calendar.html" title="Calendar">📅</a>
+  <a class="side-item" href="take-attendance.html" title="Take Attendance">📷</a>
+  <a class="side-item" href="attendance.html" title="Reports">📊</a>
+  <div class="side-bottom"><a class="side-item" onclick="logout()" title="Logout">↪</a></div>
+</aside>
+
+<main class="main">
+<div class="content">
+
+  <div class="page-head">
+    <div>
+      <div class="page-title">Admin Dashboard</div>
+      <div class="page-sub">Manage students, timetable and attendance</div>
     </div>
+    <div class="date-chip" id="todayChip"></div>
+  </div>
 
-    <div class="nav">
+  <div class="cards">
+    <div class="card c1"><div class="card-ico">👨‍🎓</div><div><p>Total Students</p><h2 id="totalStudents">-</h2></div></div>
+    <div class="card c2"><div class="card-ico">📚</div><div><p>Total Subjects</p><h2 id="totalSubjects">-</h2></div></div>
+    <div class="card c3"><div class="card-ico">🗓️</div><div><p>Today's Slots</p><h2 id="todaySlots">-</h2></div></div>
+    <div class="card c4"><div class="card-ico">✅</div><div><p>Today's Attendance</p><h2 id="todayAttendance">-</h2></div></div>
+  </div>
 
-        <a href="dashboard.html" class="active">
-            🏠 Dashboard
-        </a>
-
-        <a href="students.html">
-            👨‍🎓 Students
-        </a>
-
-        <a href="calendar.html">
-            📅 Calendar
-        </a>
-
-        <a href="take-attendance.html">
-            📷 Take Attendance
-        </a>
-
-        <a href="attendance.html">
-            📊 Reports
-        </a>
-
-        <a class="logout" onclick="logout()">
-            ↪ Logout
-        </a>
-
-    </div>
+  <div class="panel">
+    <div class="panel-title"><i>🕒</i>Today's Schedule</div>
+    <div id="schedule" class="muted">Loading...</div>
+  </div>
 
 </div>
-
-
-<div class="main">
-
-    <div class="header">
-
-        <h1>
-            Admin Dashboard
-        </h1>
-
-        <p>
-            Manage students, timetable and attendance
-        </p>
-
-    </div>
-
-
-    <div class="cards">
-
-        <div class="card">
-            <p>Total Students</p>
-            <h2 id="totalStudents">-</h2>
-        </div>
-
-        <div class="card">
-            <p>Total Subjects</p>
-            <h2 id="totalSubjects">-</h2>
-        </div>
-
-        <div class="card">
-            <p>Today's Slots</p>
-            <h2 id="todaySlots">-</h2>
-        </div>
-
-        <div class="card">
-            <p>Today's Attendance</p>
-            <h2 id="todayAttendance">-</h2>
-        </div>
-
-    </div>
-
-
-    <div class="panel">
-
-        <h2>
-            Today's Schedule
-        </h2>
-
-        <br>
-
-        <div id="schedule" class="muted">
-            Loading...
-        </div>
-
-    </div>
-
-</div>
-
+</main>
 
 <script>
+const API = "http://localhost:5000/api";
+const token = localStorage.getItem("token");
+const role = localStorage.getItem("role");
 
-const API =
-    "http://localhost:5000/api";
-
-const token =
-    localStorage.getItem("token");
-
-const role =
-    localStorage.getItem("role");
-
-
-if(!token || role !== "admin"){
-    window.location.href =
-        "login.html";
+if (!token || role !== "admin") {
+    window.location.href = "login.html";
 }
 
-
-function logout(){
-
+function logout() {
     localStorage.clear();
-
-    window.location.href =
-        "login.html";
+    window.location.href = "login.html";
 }
 
-
-function headers(){
-
-    return {
-        "Authorization":
-            "Bearer " +
-            localStorage.getItem("token")
-    };
-
+function headers() {
+    return { "Authorization": "Bearer " + localStorage.getItem("token") };
 }
 
-
-function formatTime(time){
-
-    let [h,m] =
-        time.split(":");
-
+function formatTime(time) {
+    let [h, m] = time.split(":");
     h = Number(h);
-
-    const ampm =
-        h >= 12 ? "PM" : "AM";
-
+    const ampm = h >= 12 ? "PM" : "AM";
     h = h % 12 || 12;
-
     return h + ":" + m + " " + ampm;
 }
 
+(function () {
+    let name = "Admin";
+    try { name = (JSON.parse(localStorage.getItem("user") || "null") || {}).name || "Admin"; } catch (e) {}
+    document.getElementById("topName").textContent = name;
+    document.getElementById("profileAvatar").textContent = name.charAt(0).toUpperCase();
+    document.getElementById("todayChip").textContent = new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+})();
 
-async function loadDashboard(){
+async function loadDashboard() {
+    try {
+        const studentResponse = await fetch(API + "/students", { headers: headers() });
+        const calendarResponse = await fetch(API + "/calendar", { headers: headers() });
+        const attendanceResponse = await fetch(API + "/attendance", { headers: headers() });
 
-    try{
+        const students = await studentResponse.json();
+        const calendar = await calendarResponse.json();
+        const attendance = await attendanceResponse.json();
 
-        const studentResponse =
-            await fetch(
-                API + "/students",
-                {
-                    headers:headers()
-                }
-            );
+        if (!studentResponse.ok) throw new Error(students.message);
 
+        document.getElementById("totalStudents").textContent = students.students.length;
 
-        const calendarResponse =
-            await fetch(
-                API + "/calendar",
-                {
-                    headers:headers()
-                }
-            );
+        const subjects = [...new Set(calendar.slots.map(slot => slot.subject))];
+        document.getElementById("totalSubjects").textContent = subjects.length;
 
+        const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const today = days[new Date().getDay()];
 
-        const attendanceResponse =
-            await fetch(
-                API + "/attendance",
-                {
-                    headers:headers()
-                }
-            );
+        const todaySlots = calendar.slots
+            .filter(slot => slot.day === today)
+            .sort((a, b) => a.startTime.localeCompare(b.startTime));
 
+        document.getElementById("todaySlots").textContent = todaySlots.length;
 
-        const students =
-            await studentResponse.json();
+        const todayDate = new Date().toISOString().slice(0, 10);
+        const todayAttendance = attendance.attendance.filter(item => item.date === todayDate);
 
-        const calendar =
-            await calendarResponse.json();
-
-        const attendance =
-            await attendanceResponse.json();
-
-
-        if(!studentResponse.ok)
-            throw new Error(
-                students.message
-            );
-
-
-        document
-            .getElementById("totalStudents")
-            .textContent =
-            students.students.length;
-
-
-        const subjects =
-            [
-                ...new Set(
-                    calendar.slots.map(
-                        slot => slot.subject
-                    )
-                )
-            ];
-
-
-        document
-            .getElementById("totalSubjects")
-            .textContent =
-            subjects.length;
-
-
-        const days = [
-            "Sunday",
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday"
-        ];
-
-
-        const today =
-            days[new Date().getDay()];
-
-
-        const todaySlots =
-            calendar.slots
-                .filter(
-                    slot =>
-                        slot.day === today
-                )
-                .sort(
-                    (a,b) =>
-                        a.startTime.localeCompare(
-                            b.startTime
-                        )
-                );
-
-
-        document
-            .getElementById("todaySlots")
-            .textContent =
-            todaySlots.length;
-
-
-        const todayDate =
-            new Date()
-                .toISOString()
-                .slice(0,10);
-
-
-        const todayAttendance =
-            attendance.attendance.filter(
-                item =>
-                    item.date === todayDate
-            );
-
-
-        const percentage =
-            students.students.length === 0
+        const percentage = students.students.length === 0
             ? 0
-            :
-            Math.round(
-                todayAttendance.length /
-                students.students.length *
-                100
-            );
+            : Math.round(todayAttendance.length / students.students.length * 100);
 
+        document.getElementById("todayAttendance").textContent = percentage + "%";
 
-        document
-            .getElementById("todayAttendance")
-            .textContent =
-            percentage + "%";
+        const schedule = document.getElementById("schedule");
 
-
-        const schedule =
-            document.getElementById(
-                "schedule"
-            );
-
-
-        if(todaySlots.length === 0){
-
-            schedule.innerHTML =
-                `<div class="empty">
-                    No slots for ${today}.
-                </div>`;
-
+        if (todaySlots.length === 0) {
+            schedule.innerHTML = `<div class="empty">No slots for ${today}.</div>`;
             return;
         }
 
+        /* display only: label each slot as Now / Next / Later / Done */
+        const d = new Date();
+        const nowStr = String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+        let nextMarked = false;
 
-        schedule.innerHTML =
-            todaySlots.map(
-                slot => `
+        schedule.innerHTML = todaySlots.map(slot => {
+            let cls = "later", label = "Later";
+            if (slot.endTime <= nowStr) { cls = "done"; label = "Done"; }
+            else if (slot.startTime <= nowStr) { cls = "now"; label = "Live now"; }
+            else if (!nextMarked) { cls = "next"; label = "Up next"; nextMarked = true; }
 
-                <div class="slot">
-
+            return `
+                <div class="slot ${cls}">
                     <div class="slot-left">
-
-                        <div class="time">
-                            ${formatTime(slot.startTime)}
-                            -
-                            ${formatTime(slot.endTime)}
-                        </div>
-
-                        <div class="subject">
-                            ${slot.subject}
-                        </div>
-
+                        <div class="time">${formatTime(slot.startTime)} - ${formatTime(slot.endTime)}</div>
+                        <div class="subject">${slot.subject}</div>
                     </div>
-
-                </div>
-
-                `
-            ).join("");
-
+                    <span class="badge">${label}</span>
+                </div>`;
+        }).join("");
+    } catch (error) {
+        document.getElementById("schedule").textContent = error.message;
     }
-    catch(error){
-
-        document
-            .getElementById("schedule")
-            .textContent =
-            error.message;
-
-    }
-
 }
 
-
 loadDashboard();
-
 </script>
-
 </body>
 </html>
