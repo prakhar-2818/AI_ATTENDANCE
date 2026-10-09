@@ -168,7 +168,7 @@ tbody tr:hover{background:#e0f2fe}
 .fit .info-list{padding:10px 14px;gap:6px;overflow:auto;min-height:0}
 .fit .info-row{padding:6px 10px;font-size:13px}
 .fit .info-ico{width:28px;height:28px;font-size:13px}
-.fit .attendance-box{min-height:0;position:relative;padding:0}
+.fit .attendance-box{min-height:90px;position:relative;padding:0}
 .fit .attendance-chart{position:absolute;inset:8px;width:calc(100% - 16px)!important;height:calc(100% - 16px)!important;max-height:none}
 .fit .performance-box{padding:10px;gap:10px;min-height:0}
 .fit .ring{width:min(160px,24vh);height:min(160px,24vh)}
@@ -211,6 +211,15 @@ tbody tr:hover{background:#e0f2fe}
 
 @media(max-width:1200px){.fit{height:auto;min-height:0}.fit .dashboard-grid,.fit .row2{flex:none}.fit .panel{min-height:300px}.fit .attendance-box{min-height:230px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.class-item.live{border-left-color:var(--red)}
+.class-item.live .class-subject::after{content:"Now";background:var(--red)}
+/* attendance chips: always visible, double as the chart legend */
+.fit .chips{margin-top:8px;gap:6px}
+.fit .chip{padding:5px 4px}
+.fit .chip b{font-size:16px}
+.chip span::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;background:var(--sky)}
+.chip.p span::before{background:var(--green)}
+.chip.a span::before{background:var(--red)}
 </style>
 </head>
 <body>
@@ -457,27 +466,35 @@ function buildAttendanceChart() {
     attendanceChart = new Chart(document.getElementById("attendanceChart"), {
         type: "doughnut",
         data: {
-            labels: ["Present", "Absent"],
-            datasets: [{ data: [present, absent], backgroundColor: ["#2196f3", "#10b981"], borderWidth: 3, borderColor: "#ffffff" }]
+            labels: total > 0 ? ["Present", "Absent"] : ["No data"],
+            datasets: [{
+                data: total > 0 ? [present, absent] : [1],
+                backgroundColor: total > 0 ? ["#16a34a", "#dc2626"] : ["#cbd5e1"],
+                borderWidth: 3,
+                borderColor: "#ffffff"
+            }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            cutout: "68%",
-            plugins: { legend: { position: "bottom", labels: { color: "#374151", boxWidth: 12, usePointStyle: true } } }
+            cutout: "70%",
+            layout: { padding: 6 },
+            plugins: { legend: { display: false } }   // chips below already show Present/Absent
         },
         plugins: [{
             id: "centerText",
             beforeDraw(chart) {
-                const { ctx, chartArea } = chart;
+                const arc = chart.getDatasetMeta(0).data[0];
+                if (!arc) return;
+                const { ctx } = chart;
+                const size = Math.max(11, Math.min(26, arc.innerRadius * 0.42)); // scales with ring
                 ctx.save();
-                const x = (chartArea.left + chartArea.right) / 2;
-                const y = (chartArea.top + chartArea.bottom) / 2;
                 ctx.textAlign = "center";
                 ctx.textBaseline = "middle";
-                ctx.font = "bold 20px Arial";
+                ctx.font = `800 ${size}px "Plus Jakarta Sans", Arial`;
                 ctx.fillStyle = "#374151";
-                ctx.fillText(percentage.toFixed(1) + "%", x, y);
+                const label = Number.isInteger(percentage) ? percentage + "%" : percentage.toFixed(1) + "%";
+                ctx.fillText(label, arc.x, arc.y);
                 ctx.restore();
             }
         }]
@@ -684,6 +701,15 @@ async function loadCalendar() {
     }
 }
 
+function toMinutes(t) {
+    const p = String(t || "0:0").split(":");
+    return Number(p[0]) * 60 + Number(p[1] || 0);
+}
+
+function localDateString(d) {
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+}
+
 function buildUpcomingClasses() {
     const container = document.getElementById("upcomingClasses");
     container.innerHTML = "";
@@ -696,24 +722,25 @@ function buildUpcomingClasses() {
     const now = new Date();
     const upcoming = [];
 
-    for (let offset = 0; offset < 7; offset++) {
-        const date = new Date(now);
-        date.setDate(now.getDate() + offset);
+    for (let offset = 0; offset <= 7; offset++) {
+        const date = new Date(now.getFullYear(), now.getMonth(), now.getDate() + offset);
         const dayName = getDayName(date);
 
         calendarSlots.forEach(slot => {
             if (slot.day !== dayName) return;
-            const dateString = date.toISOString().split("T")[0];
-            upcoming.push({ slot: slot, date: dateString, dateObj: date });
+
+            const start = new Date(date);
+            start.setHours(0, toMinutes(slot.startTime), 0, 0);
+            const end = new Date(date);
+            end.setHours(0, toMinutes(slot.endTime), 0, 0);
+
+            if (end <= now) return;   // class already finished, skip it
+
+            upcoming.push({ slot, start, end, date: localDateString(date), live: start <= now });
         });
     }
 
-    upcoming.sort((a, b) => {
-        const A = new Date(`${a.date}T${a.slot.startTime}`);
-        const B = new Date(`${b.date}T${b.slot.startTime}`);
-        return A - B;
-    });
-
+    upcoming.sort((a, b) => a.start - b.start);
     const firstFive = upcoming.slice(0, 5);
 
     if (firstFive.length === 0) {
@@ -723,7 +750,7 @@ function buildUpcomingClasses() {
 
     firstFive.forEach(item => {
         const div = document.createElement("div");
-        div.className = "class-item";
+        div.className = "class-item" + (item.live ? " live" : "");
         div.innerHTML = `
             <div class="class-top">
                 <div class="class-subject">${escapeHtml(item.slot.subject)}</div>
@@ -752,6 +779,7 @@ function showAllClasses() {
 loadStudentInfo();
 loadAttendance();
 loadCalendar();
+setInterval(buildUpcomingClasses, 60000);
 </script>
 </body>
 </html>
